@@ -1,0 +1,712 @@
+------+----------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------
+ Line | # File          Line | Line Type   | MX |  Reloc  | Size | Address   Object Code |  Source Code
+------+----------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------
+    1 |  1 shrhello.s      1 | Comment     | 11 |         |    0 | 00/0000               | ****************************************
+    2 |  1 shrhello.s      2 | Comment     | 11 |         |    0 | 00/0000               | * SHRHELLO                             *
+    3 |  1 shrhello.s      3 | Comment     | 11 |         |    0 | 00/0000               | *                                      *
+    4 |  1 shrhello.s      4 | Comment     | 11 |         |    0 | 00/0000               | *  Dagen Brock <dagenbrock@gmail.com>  *
+    5 |  1 shrhello.s      5 | Comment     | 11 |         |    0 | 00/0000               | *  2013-07-21                          *
+    6 |  1 shrhello.s      6 | Comment     | 11 |         |    0 | 00/0000               | ****************************************
+    7 |  1 shrhello.s      7 | Empty       | 11 |         |    0 | 00/0000               |                                       
+    8 |  1 shrhello.s      8 | Directive   | 11 |         |    0 | 00/0000               |                  rel                  ; Compile
+    9 |  1 shrhello.s      9 | Directive   | 11 |         |    0 | 00/0000               |                  dsk   shrhello.l     ; Save Name
+   10 |  1 shrhello.s     10 | Directive   | 00 |         |    0 | 00/0000               |                  mx    %00            
+   11 |  1 shrhello.s     11 | Code        | 00 |         |    1 | 00/0000 : 4B          |                  phk                  ; Set Data Bank to Program Bank
+   12 |  1 shrhello.s     12 | Code        | 00 |         |    1 | 00/0001 : AB          |                  plb                  ; Always do this first!
+   13 |  1 shrhello.s     13 | Empty       | 00 |         |    0 | 00/0002               |                                       
+   14 |  1 shrhello.s     14 | Code        | 00 |         |    3 | 00/0002 : A9 FF 0F    |                  lda   #$0FFF         ; WHITE color
+   15 |  1 shrhello.s     15 | Code        | 00 |         |    3 | 00/0005 : A2 0F 00    |                  ldx   #$000F         ; palette index 1 (NOT zero)
+   16 |  1 shrhello.s     16 | Code        | 00 |  2      |    3 | 00/0008 : 20 70 00    |                  jsr   SetPaletteColor
+   17 |  1 shrhello.s     17 | Code        | 00 |         |    3 | 00/000B : A9 89 05    |                  lda   #$0589         ; other color
+   18 |  1 shrhello.s     18 | Code        | 00 |         |    3 | 00/000E : A2 01 00    |                  ldx   #$0001         ; palette index 1 (NOT zero)
+   19 |  1 shrhello.s     19 | Code        | 00 |  2      |    3 | 00/0011 : 20 70 00    |                  jsr   SetPaletteColor
+   20 |  1 shrhello.s     20 | Code        | 00 |         |    3 | 00/0014 : A9 00 00    |                  lda   #$0000         
+   21 |  1 shrhello.s     21 | Code        | 00 |  2      |    3 | 00/0017 : 20 86 00    |                  jsr   SetSCBs        ; set all SCBs to 00 (320 mode, pal 0, no fill, no interrupt)
+   22 |  1 shrhello.s     22 | Code        | 00 |  2      |    3 | 00/001A : 20 65 00    |                  jsr   GraphicsOn     
+   23 |  1 shrhello.s     23 | Empty       | 00 |         |    0 | 00/001D               |                                       
+   24 |  1 shrhello.s     24 | Empty       | 00 |         |    0 | 00/001D               |                                       
+   25 |  1 shrhello.s     25 | Code        | 00 |         |    3 | 00/001D : A9 00 00    |                  lda   #$0000         ; clear screen to color 0 and turn on SHR graphics
+   26 |  1 shrhello.s     26 | Code        | 00 |  2      |    3 | 00/0020 : 20 7A 00    |                  jsr   ClearToColor   
+   27 |  1 shrhello.s     27 | Code        | 00 |  2      |    3 | 00/0023 : A9 54 00    |                  lda   #HelloStr      
+   28 |  1 shrhello.s     28 | Code        | 00 |         |    3 | 00/0026 : A2 9E 25    |                  ldx   #60*160+30     
+   29 |  1 shrhello.s     29 | Code        | 00 |  2      |    3 | 00/0029 : 20 A7 00    |                  jsr   DrawString     
+   30 |  1 shrhello.s     30 | Code        | 00 |  2      |    3 | 00/002C : 20 92 00    |                  jsr   WaitKey        
+   31 |  1 shrhello.s     31 | Empty       | 00 |         |    0 | 00/002F               |                                       
+   32 |  1 shrhello.s     32 | Code        | 00 |         |    3 | 00/002F : A9 11 11    |                  lda   #$1111         ; clear screen to color 1
+   33 |  1 shrhello.s     33 | Code        | 00 |  2      |    3 | 00/0032 : 20 7A 00    |                  jsr   ClearToColor   
+   34 |  1 shrhello.s     34 | Code        | 00 |  2      |    3 | 00/0035 : A9 54 00    |                  lda   #HelloStr      
+   35 |  1 shrhello.s     35 | Code        | 00 |         |    3 | 00/0038 : A2 9E 25    |                  ldx   #60*160+30     
+   36 |  1 shrhello.s     36 | Code        | 00 |  2      |    3 | 00/003B : 20 A7 00    |                  jsr   DrawString     
+   37 |  1 shrhello.s     37 | Code        | 00 |  2      |    3 | 00/003E : 20 92 00    |                  jsr   WaitKey        
+   38 |  1 shrhello.s     38 | Empty       | 00 |         |    0 | 00/0041               |                                       
+   39 |  1 shrhello.s     39 | Empty       | 00 |         |    0 | 00/0041               |                                       
+   40 |  1 shrhello.s     40 | Empty       | 00 |         |    0 | 00/0041               |                                       
+   41 |  1 shrhello.s     41 | Code        | 00 |         |    4 | 00/0041 : 22 A8 00 E1 |                  jsl   $E100A8        ; Prodos 16 entry point
+   42 |  1 shrhello.s     42 | Data        | 00 |         |    2 | 00/0045 : 29 00       |                  da    $29            ; Quit code
+   43 |  1 shrhello.s     43 | Data        | 00 |  3      |    4 | 00/0047 : 4E 00 00 00 |                  adrl  QuitParm       ; address of parameter table
+   44 |  1 shrhello.s     44 | Code        | 00 |         |    2 | 00/004B : B0 00       |                  bcs   Error          ; never taken
+   45 |  1 shrhello.s     45 | Empty       | 00 |         |    0 | 00/004D               |                                       
+   46 |  1 shrhello.s     46 | Code        | 00 |         |    1 | 00/004D : 00          | Error            brk                  ; should never get here
+   47 |  1 shrhello.s     47 | Empty       | 00 |         |    0 | 00/004E               |                                       
+   48 |  1 shrhello.s     48 | Data        | 00 |         |    4 | 00/004E : 00 00 00 00 | QuitParm         adrl  $0000          ; pointer to pathname (not used here)
+   49 |  1 shrhello.s     49 | Data        | 00 |         |    2 | 00/0052 : 00 00       |                  da    $00            ; quit type (absolute quite)
+   50 |  1 shrhello.s     50 | Empty       | 00 |         |    0 | 00/0054               |                                       
+   51 |  1 shrhello.s     51 | Data        | 00 |         |   17 | 00/0054 : 10 48 45 4C | HelloStr         str   'HELLO KANSASFEST'
+      |                      |             |    |         |      |           4C 4F 20 4B |
+      |                      |             |    |         |      |           41 4E 53 41 |
+      |                      |             |    |         |      |           53 46 45 53 |
+      |                      |             |    |         |      |           54          |
+   52 |  1 shrhello.s     52 | Empty       | 00 |         |    0 | 00/0065               |                                       
+   53 |  1 shrhello.s     53 | Comment     | 00 |         |    0 | 00/0065               | ****************************************
+   54 |  1 shrhello.s     54 | Comment     | 00 |         |    0 | 00/0065               | * Turn on SHR mode                     *
+   55 |  1 shrhello.s     55 | Comment     | 00 |         |    0 | 00/0065               | ****************************************
+   56 |  1 shrhello.s     56 | Code        | 11 |         |    2 | 00/0065 : E2 30       | GraphicsOn       sep   #$30           ;8-bit mode
+   57 |  1 shrhello.s     57 | Code        | 11 |         |    2 | 00/0067 : A9 81       |                  lda   #$81           ;%1000 0001
+   58 |  1 shrhello.s     58 | Code        | 11 |         |    4 | 00/0069 : 8F 29 C0 00 |                  stal  $00C029        ;Turn on SHR mode
+   59 |  1 shrhello.s     59 | Code        | 00 |         |    2 | 00/006D : C2 30       |                  rep   #$30           ;back to 16-bit mode
+   60 |  1 shrhello.s     60 | Code        | 00 |         |    1 | 00/006F : 60          |                  rts                  
+   61 |  1 shrhello.s     61 | Empty       | 00 |         |    0 | 00/0070               |                                       
+   62 |  1 shrhello.s     62 | Comment     | 00 |         |    0 | 00/0070               | ****************************************
+   63 |  1 shrhello.s     63 | Comment     | 00 |         |    0 | 00/0070               | * A= color values (0RGB)               *
+   64 |  1 shrhello.s     64 | Comment     | 00 |         |    0 | 00/0070               | * X= color/palette offset              *
+   65 |  1 shrhello.s     65 | Comment     | 00 |         |    0 | 00/0070               | *   (0-F = pal0, 10-1F = pal1, etc.)   *
+   66 |  1 shrhello.s     66 | Comment     | 00 |         |    0 | 00/0070               | ****************************************
+   67 |  1 shrhello.s     67 | Code        | 00 |         |    1 | 00/0070 : 48          | SetPaletteColor  pha                  ;save accumulator
+   68 |  1 shrhello.s     68 | Code        | 00 |         |    1 | 00/0071 : 8A          |                  txa                  
+   69 |  1 shrhello.s     69 | Code        | 00 |         |    1 | 00/0072 : 0A          |                  asl                  ;X*2 = real offset to color table
+   70 |  1 shrhello.s     70 | Code        | 00 |         |    1 | 00/0073 : AA          |                  tax                  
+   71 |  1 shrhello.s     71 | Code        | 00 |         |    1 | 00/0074 : 68          |                  pla                  
+   72 |  1 shrhello.s     72 | Code        | 00 |         |    4 | 00/0075 : 9F 00 9E E1 |                  stal  $E19E00,x      ;palettes are stored from $E19E00-FF
+   73 |  1 shrhello.s     73 | Code        | 00 |         |    1 | 00/0079 : 60          |                  rts                  ;yup, that's it
+   74 |  1 shrhello.s     74 | Empty       | 00 |         |    0 | 00/007A               |                                       
+   75 |  1 shrhello.s     75 | Comment     | 00 |         |    0 | 00/007A               | ****************************************
+   76 |  1 shrhello.s     76 | Comment     | 00 |         |    0 | 00/007A               | * A= color values (0RGB)               *
+   77 |  1 shrhello.s     77 | Comment     | 00 |         |    0 | 00/007A               | ****************************************
+   78 |  1 shrhello.s     78 | Code        | 00 |         |    3 | 00/007A : A2 00 7D    | ClearToColor     ldx   #$7D00         ;start at top of pixel data! ($2000-9D00)
+   79 |  1 shrhello.s     79 | Code        | 00 |         |    1 | 00/007D : CA          | _clearloop       dex                  
+   80 |  1 shrhello.s     80 | Code        | 00 |         |    1 | 00/007E : CA          |                  dex                  
+   81 |  1 shrhello.s     81 | Code        | 00 |         |    4 | 00/007F : 9F 00 20 E1 |                  stal  $E12000,x      ;screen location
+   82 |  1 shrhello.s     82 | Code        | 00 |         |    2 | 00/0083 : D0 F8       |                  bne   _clearloop     ;loop until we've worked our way down to 0
+   83 |  1 shrhello.s     83 | Code        | 00 |         |    1 | 00/0085 : 60          |                  rts                  
+   84 |  1 shrhello.s     84 | Empty       | 00 |         |    0 | 00/0086               |                                       
+   85 |  1 shrhello.s     85 | Code        | 00 |         |    3 | 00/0086 : A2 00 01    | SetSCBs          ldx   #$0100         ;set all $100 scbs to A
+   86 |  1 shrhello.s     86 | Code        | 00 |         |    1 | 00/0089 : CA          | _scbloop         dex                  
+   87 |  1 shrhello.s     87 | Code        | 00 |         |    1 | 00/008A : CA          |                  dex                  
+   88 |  1 shrhello.s     88 | Code        | 00 |         |    4 | 00/008B : 9F 00 9D E1 |                  stal  $E19D00,x      
+   89 |  1 shrhello.s     89 | Code        | 00 |         |    2 | 00/008F : D0 F8       |                  bne   _scbloop       
+   90 |  1 shrhello.s     90 | Code        | 00 |         |    1 | 00/0091 : 60          |                  rts                  
+   91 |  1 shrhello.s     91 | Empty       | 00 |         |    0 | 00/0092               |                                       
+   92 |  1 shrhello.s     92 | Code        | 11 |         |    2 | 00/0092 : E2 30       | WaitKey          sep   #$30           
+   93 |  1 shrhello.s     93 | Code        | 11 |         |    4 | 00/0094 : AF 00 C0 00 | _wait            ldal  $00c000        
+   94 |  1 shrhello.s     94 | Code        | 11 |         |    2 | 00/0098 : 10 FA       |                  bpl   _wait          
+   95 |  1 shrhello.s     95 | Code        | 11 |         |    4 | 00/009A : 8F 10 C0 00 |                  stal  $00c010        
+   96 |  1 shrhello.s     96 | Code        | 00 |         |    2 | 00/009E : C2 30       |                  rep   #$30           
+   97 |  1 shrhello.s     97 | Code        | 00 |         |    1 | 00/00A0 : 60          |                  rts                  
+   98 |  1 shrhello.s     98 | Empty       | 00 |         |    0 | 00/00A1               |                                       
+   99 |  1 shrhello.s     99 | Directive   | 00 |         |    0 | 00/00A1               |                  use   font.s         ;include our font library
+  100 |  2     font.s      1 | Comment     | 00 |         |    0 | 00/00A1               | ****************************************
+  101 |  2     font.s      2 | Comment     | 00 |         |    0 | 00/00A1               | * FONT ENGINE (v3?)                    *
+  102 |  2     font.s      3 | Comment     | 00 |         |    0 | 00/00A1               | *                                      *
+  103 |  2     font.s      4 | Comment     | 00 |         |    0 | 00/00A1               | *  Dagen Brock <dagenbrock@gmail.com>  *
+  104 |  2     font.s      5 | Comment     | 00 |         |    0 | 00/00A1               | *  2013-07-20                          *
+  105 |  2     font.s      6 | Comment     | 00 |         |    0 | 00/00A1               | ****************************************
+  106 |  2     font.s      7 | Comment     | 00 |         |    0 | 00/00A1               | * A= ptr to string preceded by length  *
+  107 |  2     font.s      8 | Comment     | 00 |         |    0 | 00/00A1               | * X= screen location                   *
+  108 |  2     font.s      9 | Comment     | 00 |         |    0 | 00/00A1               | ****************************************
+  109 |  2     font.s     10 | Comment     | 00 |         |    0 | 00/00A1               | ; each char:
+  110 |  2     font.s     11 | Comment     | 00 |         |    0 | 00/00A1               | ;  draw char at loc
+  111 |  2     font.s     12 | Comment     | 00 |         |    0 | 00/00A1               | ;  update loc
+  112 |  2     font.s     13 | Comment     | 00 |         |    0 | 00/00A1               | ;  see if length hit - no? back to draw char
+  113 |  2     font.s     14 | Directive   | 00 |         |    0 | 00/00A1               |                  mx    %00            
+  114 |  2     font.s     15 | Data        | 00 |         |    2 | 00/00A1 : 00 00       | ozunid_1         ds    2              ;length of string (only one byte currently used)
+  115 |  2     font.s     16 | Data        | 00 |         |    2 | 00/00A3 : 00 00       | ozunid_2         ds    2              ;index of current character
+  116 |  2     font.s     17 | Data        | 00 |         |    2 | 00/00A5 : 00 00       | ozunid_3         ds    2              ;current top left char position
+  117 |  2     font.s     18 | Variable    | 00 |         |    0 | 00/00A7               | ]F_StrPtr        equ   $00            ;pointer to string (including length byte) / DP
+  118 |  2     font.s     19 | Empty       | 00 |         |    0 | 00/00A7               |                                       
+  119 |  2     font.s     20 | Empty       | 00 |         |    0 | 00/00A7               |                                       
+  120 |  2     font.s     21 | Code        | 00 |         |    2 | 00/00A7 : 85 00       | DrawString       sta   ]F_StrPtr      ;store at dp 0 ($00) for indirect loads
+  121 |  2     font.s     22 | Code        | 00 |  2      |    3 | 00/00A9 : 8E A5 00    |                  stx   ozunid_3       
+  122 |  2     font.s     23 | Code        | 00 |  2      |    3 | 00/00AC : 9C A3 00    |                  stz   ozunid_2       
+  123 |  2     font.s     24 | Code        | 00 |         |    2 | 00/00AF : B2 00       |                  lda   (]F_StrPtr)    
+  124 |  2     font.s     25 | Code        | 00 |         |    3 | 00/00B1 : 29 FF 00    |                  and   #$00ff         ;strip off first char (len is only one byte)
+  125 |  2     font.s     26 | Code        | 00 |  2      |    3 | 00/00B4 : 8D A1 00    |                  sta   ozunid_1       ;get our length byte
+  126 |  2     font.s     27 | Empty       | 00 |         |    0 | 00/00B7               |                                       
+  127 |  2     font.s     28 | Code        | 00 |  2      |    3 | 00/00B7 : AD A3 00    | NextChar         lda   ozunid_2       
+  128 |  2     font.s     29 | Code        | 00 |  2      |    3 | 00/00BA : CD A1 00    |                  cmp   ozunid_1       
+  129 |  2     font.s     30 | Code        | 00 |         |    2 | 00/00BD : D0 01       |                  bne   _notDone       
+  130 |  2     font.s     31 | Code        | 00 |         |    1 | 00/00BF : 60          |                  rts                  ;DONE! Return to caller
+  131 |  2     font.s     32 | Empty       | 00 |         |    0 | 00/00C0               |                                       
+  132 |  2     font.s     33 | Code        | 00 |  2      |    3 | 00/00C0 : EE A3 00    | _notDone         inc   ozunid_2       
+  133 |  2     font.s     34 | Code        | 00 |  2      |    3 | 00/00C3 : AC A3 00    |                  ldy   ozunid_2       
+  134 |  2     font.s     35 | Code        | 00 |         |    2 | 00/00C6 : B1 00       |                  lda   ($00),y        ;get next char!
+  135 |  2     font.s     36 | Code        | 00 |         |    3 | 00/00C8 : 29 FF 00    |                  and   #$00FF         ;mask high byte
+  136 |  2     font.s     37 | Code        | 00 |         |    1 | 00/00CB : 38          |                  sec                  
+  137 |  2     font.s     38 | Code        | 00 |         |    3 | 00/00CC : E9 20 00    |                  sbc   #' '           ;our table starts with space ' '
+  138 |  2     font.s     39 | Code        | 00 |         |    1 | 00/00CF : 0A          |                  asl                  ;*2
+  139 |  2     font.s     40 | Code        | 00 |         |    1 | 00/00D0 : A8          |                  tay                  
+  140 |  2     font.s     41 | Code        | 00 |  2      |    3 | 00/00D1 : AE A5 00    |                  ldx   ozunid_3       
+  141 |  2     font.s     42 | Code        | 00 |  2      |    3 | 00/00D4 : 20 E5 00    |                  jsr   _drawChar      
+  142 |  2     font.s     43 | Code        | 00 |  2      |    3 | 00/00D7 : EE A5 00    |                  inc   ozunid_3       ;compare to addition time (?)
+  143 |  2     font.s     44 | Code        | 00 |  2      |    3 | 00/00DA : EE A5 00    |                  inc   ozunid_3       
+  144 |  2     font.s     45 | Code        | 00 |  2      |    3 | 00/00DD : EE A5 00    |                  inc   ozunid_3       
+  145 |  2     font.s     46 | Code        | 00 |  2      |    3 | 00/00E0 : EE A5 00    |                  inc   ozunid_3       ;update screen pos (2 words=8 pixels)
+  146 |  2     font.s     47 | Code        | 00 |         |    2 | 00/00E3 : 80 D2       |                  bra   NextChar       
+  147 |  2     font.s     48 | Empty       | 00 |         |    0 | 00/00E5               |                                       
+  148 |  2     font.s     49 | Comment     | 00 |         |    0 | 00/00E5               | ;x = TopLeft screen pos
+  149 |  2     font.s     50 | Comment     | 00 |         |    0 | 00/00E5               | ;y = char table offset
+  150 |  2     font.s     51 | Code        | 00 |  2      |    3 | 00/00E5 : B9 42 01    | _drawChar        lda   FontTable,y    ;get real address of char data
+  151 |  2     font.s     52 | Code        | 00 |         |    1 | 00/00E8 : 38          |                  sec                  
+  152 |  2     font.s     53 | Code        | 00 |  2      |    3 | 00/00E9 : E9 C2 01    |                  sbc   #FontData      ;pivot offset - now a is offset of fontdata
+  153 |  2     font.s     54 | Code        | 00 |         |    1 | 00/00EC : A8          |                  tay                  ;so we'll index with that
+  154 |  2     font.s     55 | Code        | 00 |  2      |    3 | 00/00ED : B9 C2 01    |                  lda   FontData,y     
+  155 |  2     font.s     56 | Code        | 00 |         |    4 | 00/00F0 : 9F 00 20 E1 |                  stal  $E12000,x      ; 160*0+0
+  156 |  2     font.s     57 | Code        | 00 |  2      |    3 | 00/00F4 : B9 C4 01    |                  lda   FontData+2,y   
+  157 |  2     font.s     58 | Code        | 00 |         |    4 | 00/00F7 : 9F 02 20 E1 |                  stal  $E12000+2,x    ; 160*0+2
+  158 |  2     font.s     59 | Code        | 00 |  2      |    3 | 00/00FB : B9 C6 01    |                  lda   FontData+4,y   
+  159 |  2     font.s     60 | Code        | 00 |         |    4 | 00/00FE : 9F A0 20 E1 |                  stal  $E12000+160,x  ; 160*1+0
+  160 |  2     font.s     61 | Code        | 00 |  2      |    3 | 00/0102 : B9 C8 01    |                  lda   FontData+6,y   
+  161 |  2     font.s     62 | Code        | 00 |         |    4 | 00/0105 : 9F A2 20 E1 |                  stal  $E12000+162,x  ; 160*1+2
+  162 |  2     font.s     63 | Code        | 00 |  2      |    3 | 00/0109 : B9 CA 01    |                  lda   FontData+8,y   
+  163 |  2     font.s     64 | Code        | 00 |         |    4 | 00/010C : 9F 40 21 E1 |                  stal  $E12000+320,x  ; 160*2+0
+  164 |  2     font.s     65 | Code        | 00 |  2      |    3 | 00/0110 : B9 CC 01    |                  lda   FontData+10,y  
+  165 |  2     font.s     66 | Code        | 00 |         |    4 | 00/0113 : 9F 42 21 E1 |                  stal  $E12000+322,x  ; 160*2+2
+  166 |  2     font.s     67 | Code        | 00 |  2      |    3 | 00/0117 : B9 CE 01    |                  lda   FontData+12,y  
+  167 |  2     font.s     68 | Code        | 00 |         |    4 | 00/011A : 9F E0 21 E1 |                  stal  $E12000+480,x  ; 160*3+0
+  168 |  2     font.s     69 | Code        | 00 |  2      |    3 | 00/011E : B9 D0 01    |                  lda   FontData+14,y  
+  169 |  2     font.s     70 | Code        | 00 |         |    4 | 00/0121 : 9F E2 21 E1 |                  stal  $E12000+482,x  ; 160*3+2
+  170 |  2     font.s     71 | Code        | 00 |  2      |    3 | 00/0125 : B9 D2 01    |                  lda   FontData+16,y  
+  171 |  2     font.s     72 | Code        | 00 |         |    4 | 00/0128 : 9F 80 22 E1 |                  stal  $E12000+640,x  ; 160*4+0
+  172 |  2     font.s     73 | Code        | 00 |  2      |    3 | 00/012C : B9 D4 01    |                  lda   FontData+18,y  
+  173 |  2     font.s     74 | Code        | 00 |         |    4 | 00/012F : 9F 82 22 E1 |                  stal  $E12000+642,x  ; 160*4+2
+  174 |  2     font.s     75 | Code        | 00 |  2      |    3 | 00/0133 : B9 D6 01    |                  lda   FontData+20,y  
+  175 |  2     font.s     76 | Code        | 00 |         |    4 | 00/0136 : 9F 20 23 E1 |                  stal  $E12000+800,x  ; 160*5+0
+  176 |  2     font.s     77 | Code        | 00 |  2      |    3 | 00/013A : B9 D8 01    |                  lda   FontData+22,y  
+  177 |  2     font.s     78 | Code        | 00 |         |    4 | 00/013D : 9F 22 23 E1 |                  stal  $E12000+802,x  ; 160*5+2
+  178 |  2     font.s     79 | Code        | 00 |         |    1 | 00/0141 : 60          |                  rts                  
+  179 |  2     font.s     80 | Empty       | 00 |         |    0 | 00/0142               |                                       
+  180 |  2     font.s     81 | Data        | 00 |  2      |    2 | 00/0142 : C2 01       | FontTable        dw    s_Space        
+  181 |  2     font.s     82 | Data        | 00 |  2      |    2 | 00/0144 : DA 01       |                  dw    s_Exclaim      
+  182 |  2     font.s     83 | Data        | 00 |  2      |    2 | 00/0146 : F2 01       |                  dw    s_Quote        
+  183 |  2     font.s     84 | Data        | 00 |  2      |    2 | 00/0148 : 0A 02       |                  dw    s_Number       
+  184 |  2     font.s     85 | Data        | 00 |  2      |    2 | 00/014A : 22 02       |                  dw    s_Dollar       
+  185 |  2     font.s     86 | Data        | 00 |  2      |    2 | 00/014C : 3A 02       |                  dw    s_Percent      
+  186 |  2     font.s     87 | Data        | 00 |  2      |    2 | 00/014E : 52 02       |                  dw    s_Amper        
+  187 |  2     font.s     88 | Data        | 00 |  2      |    2 | 00/0150 : 6A 02       |                  dw    s_Single       
+  188 |  2     font.s     89 | Data        | 00 |  2      |    2 | 00/0152 : 82 02       |                  dw    s_OpenParen    
+  189 |  2     font.s     90 | Data        | 00 |  2      |    2 | 00/0154 : 9A 02       |                  dw    s_CloseParen   
+  190 |  2     font.s     91 | Data        | 00 |  2      |    2 | 00/0156 : B2 02       |                  dw    s_Asterix      
+  191 |  2     font.s     92 | Data        | 00 |  2      |    2 | 00/0158 : CA 02       |                  dw    s_Plus         
+  192 |  2     font.s     93 | Data        | 00 |  2      |    2 | 00/015A : E2 02       |                  dw    s_Comma        
+  193 |  2     font.s     94 | Data        | 00 |  2      |    2 | 00/015C : FA 02       |                  dw    s_Minus        
+  194 |  2     font.s     95 | Data        | 00 |  2      |    2 | 00/015E : 12 03       |                  dw    s_Period       
+  195 |  2     font.s     96 | Data        | 00 |  2      |    2 | 00/0160 : 2A 03       |                  dw    s_Slash        
+  196 |  2     font.s     97 | Data        | 00 |  2      |    2 | 00/0162 : 42 03       |                  dw    s_N0           
+  197 |  2     font.s     98 | Data        | 00 |  2      |    2 | 00/0164 : 5A 03       |                  dw    s_N1           
+  198 |  2     font.s     99 | Data        | 00 |  2      |    2 | 00/0166 : 72 03       |                  dw    s_N2           
+  199 |  2     font.s    100 | Data        | 00 |  2      |    2 | 00/0168 : 8A 03       |                  dw    s_N3           
+  200 |  2     font.s    101 | Data        | 00 |  2      |    2 | 00/016A : A2 03       |                  dw    s_N4           
+  201 |  2     font.s    102 | Data        | 00 |  2      |    2 | 00/016C : BA 03       |                  dw    s_N5           
+  202 |  2     font.s    103 | Data        | 00 |  2      |    2 | 00/016E : D2 03       |                  dw    s_N6           
+  203 |  2     font.s    104 | Data        | 00 |  2      |    2 | 00/0170 : EA 03       |                  dw    s_N7           
+  204 |  2     font.s    105 | Data        | 00 |  2      |    2 | 00/0172 : 02 04       |                  dw    s_N8           
+  205 |  2     font.s    106 | Data        | 00 |  2      |    2 | 00/0174 : 1A 04       |                  dw    s_N9           
+  206 |  2     font.s    107 | Data        | 00 |  2      |    2 | 00/0176 : 32 04       |                  dw    s_Colon        
+  207 |  2     font.s    108 | Data        | 00 |  2      |    2 | 00/0178 : 4A 04       |                  dw    s_Semi         
+  208 |  2     font.s    109 | Data        | 00 |  2      |    2 | 00/017A : 62 04       |                  dw    s_LAngle       
+  209 |  2     font.s    110 | Data        | 00 |  2      |    2 | 00/017C : 7A 04       |                  dw    s_Equal        
+  210 |  2     font.s    111 | Data        | 00 |  2      |    2 | 00/017E : 92 04       |                  dw    s_RAngle       
+  211 |  2     font.s    112 | Data        | 00 |  2      |    2 | 00/0180 : AA 04       |                  dw    s_Question     
+  212 |  2     font.s    113 | Data        | 00 |  2      |    2 | 00/0182 : C2 04       |                  dw    s_At           
+  213 |  2     font.s    114 | Data        | 00 |  2      |    2 | 00/0184 : DA 04       |                  dw    s_A            
+  214 |  2     font.s    115 | Data        | 00 |  2      |    2 | 00/0186 : F2 04       |                  dw    s_B            
+  215 |  2     font.s    116 | Data        | 00 |  2      |    2 | 00/0188 : 0A 05       |                  dw    s_C            
+  216 |  2     font.s    117 | Data        | 00 |  2      |    2 | 00/018A : 22 05       |                  dw    s_D            
+  217 |  2     font.s    118 | Data        | 00 |  2      |    2 | 00/018C : 3A 05       |                  dw    s_E            
+  218 |  2     font.s    119 | Data        | 00 |  2      |    2 | 00/018E : 52 05       |                  dw    s_F            
+  219 |  2     font.s    120 | Data        | 00 |  2      |    2 | 00/0190 : 6A 05       |                  dw    s_G            
+  220 |  2     font.s    121 | Data        | 00 |  2      |    2 | 00/0192 : 82 05       |                  dw    s_H            
+  221 |  2     font.s    122 | Data        | 00 |  2      |    2 | 00/0194 : 9A 05       |                  dw    s_I            
+  222 |  2     font.s    123 | Data        | 00 |  2      |    2 | 00/0196 : B2 05       |                  dw    s_J            
+  223 |  2     font.s    124 | Data        | 00 |  2      |    2 | 00/0198 : CA 05       |                  dw    s_K            
+  224 |  2     font.s    125 | Data        | 00 |  2      |    2 | 00/019A : E2 05       |                  dw    s_L            
+  225 |  2     font.s    126 | Data        | 00 |  2      |    2 | 00/019C : FA 05       |                  dw    s_M            
+  226 |  2     font.s    127 | Data        | 00 |  2      |    2 | 00/019E : 12 06       |                  dw    s_N            
+  227 |  2     font.s    128 | Data        | 00 |  2      |    2 | 00/01A0 : 2A 06       |                  dw    s_O            
+  228 |  2     font.s    129 | Data        | 00 |  2      |    2 | 00/01A2 : 42 06       |                  dw    s_P            
+  229 |  2     font.s    130 | Data        | 00 |  2      |    2 | 00/01A4 : 5A 06       |                  dw    s_Q            
+  230 |  2     font.s    131 | Data        | 00 |  2      |    2 | 00/01A6 : 72 06       |                  dw    s_R            
+  231 |  2     font.s    132 | Data        | 00 |  2      |    2 | 00/01A8 : 8A 06       |                  dw    s_S            
+  232 |  2     font.s    133 | Data        | 00 |  2      |    2 | 00/01AA : A2 06       |                  dw    s_T            
+  233 |  2     font.s    134 | Data        | 00 |  2      |    2 | 00/01AC : BA 06       |                  dw    s_U            
+  234 |  2     font.s    135 | Data        | 00 |  2      |    2 | 00/01AE : D2 06       |                  dw    s_V            
+  235 |  2     font.s    136 | Data        | 00 |  2      |    2 | 00/01B0 : EA 06       |                  dw    s_W            
+  236 |  2     font.s    137 | Data        | 00 |  2      |    2 | 00/01B2 : 02 07       |                  dw    s_X            
+  237 |  2     font.s    138 | Data        | 00 |  2      |    2 | 00/01B4 : 1A 07       |                  dw    s_Y            
+  238 |  2     font.s    139 | Data        | 00 |  2      |    2 | 00/01B6 : 32 07       |                  dw    s_Z            
+  239 |  2     font.s    140 | Data        | 00 |  2      |    2 | 00/01B8 : 4A 07       |                  dw    s_LBracket     
+  240 |  2     font.s    141 | Data        | 00 |  2      |    2 | 00/01BA : 62 07       |                  dw    s_BackSlash    
+  241 |  2     font.s    142 | Data        | 00 |  2      |    2 | 00/01BC : 7A 07       |                  dw    s_RBracket     
+  242 |  2     font.s    143 | Data        | 00 |  2      |    2 | 00/01BE : 92 07       |                  dw    s_Carot        
+  243 |  2     font.s    144 | Data        | 00 |  2      |    2 | 00/01C0 : AA 07       |                  dw    s_UnderLine    
+  244 |  2     font.s    145 | Empty       | 00 |         |    0 | 00/01C2               |                                       
+  245 |  2     font.s    146 | Empty       | 00 |         |    0 | 00/01C2               | FontData                              
+  246 |  2     font.s    147 | Data        | 00 |         |    4 | 00/01C2 : 00 00 00 00 | s_Space          hex   00000000       
+  247 |  2     font.s    148 | Data        | 00 |         |    4 | 00/01C6 : 00 00 00 00 |                  hex   00000000       
+  248 |  2     font.s    149 | Data        | 00 |         |    4 | 00/01CA : 00 00 00 00 |                  hex   00000000       
+  249 |  2     font.s    150 | Data        | 00 |         |    4 | 00/01CE : 00 00 00 00 |                  hex   00000000       
+  250 |  2     font.s    151 | Data        | 00 |         |    4 | 00/01D2 : 00 00 00 00 |                  hex   00000000       
+  251 |  2     font.s    152 | Data        | 00 |         |    4 | 00/01D6 : 00 00 00 00 |                  hex   00000000       
+  252 |  2     font.s    153 | Empty       | 00 |         |    0 | 00/01DA               |                                       
+  253 |  2     font.s    154 | Data        | 00 |         |    4 | 00/01DA : 00 0F F0 00 | s_Exclaim        hex   000FF000       
+  254 |  2     font.s    155 | Data        | 00 |         |    4 | 00/01DE : 00 0F F0 00 |                  hex   000FF000       
+  255 |  2     font.s    156 | Data        | 00 |         |    4 | 00/01E2 : 00 0F F0 00 |                  hex   000FF000       
+  256 |  2     font.s    157 | Data        | 00 |         |    4 | 00/01E6 : 00 0F F0 00 |                  hex   000FF000       
+  257 |  2     font.s    158 | Data        | 00 |         |    4 | 00/01EA : 00 00 00 00 |                  hex   00000000       
+  258 |  2     font.s    159 | Data        | 00 |         |    4 | 00/01EE : 00 0F F0 00 |                  hex   000FF000       
+  259 |  2     font.s    160 | Empty       | 00 |         |    0 | 00/01F2               |                                       
+  260 |  2     font.s    161 | Data        | 00 |         |    4 | 00/01F2 : 0F F0 0F F0 | s_Quote          hex   0FF00FF0       
+  261 |  2     font.s    162 | Data        | 00 |         |    4 | 00/01F6 : 00 F0 00 F0 |                  hex   00F000F0       
+  262 |  2     font.s    163 | Data        | 00 |         |    4 | 00/01FA : 00 00 00 00 |                  hex   00000000       
+  263 |  2     font.s    164 | Data        | 00 |         |    4 | 00/01FE : 00 00 00 00 |                  hex   00000000       
+  264 |  2     font.s    165 | Data        | 00 |         |    4 | 00/0202 : 00 00 00 00 |                  hex   00000000       
+  265 |  2     font.s    166 | Data        | 00 |         |    4 | 00/0206 : 00 00 00 00 |                  hex   00000000       
+  266 |  2     font.s    167 | Empty       | 00 |         |    0 | 00/020A               |                                       
+  267 |  2     font.s    168 | Data        | 00 |         |    4 | 00/020A : 00 00 00 00 | s_Number         hex   00000000       
+  268 |  2     font.s    169 | Data        | 00 |         |    4 | 00/020E : 00 F0 0F 00 |                  hex   00F00F00       
+  269 |  2     font.s    170 | Data        | 00 |         |    4 | 00/0212 : 0F FF FF F0 |                  hex   0FFFFFF0       
+  270 |  2     font.s    171 | Data        | 00 |         |    4 | 00/0216 : 00 F0 0F 00 |                  hex   00F00F00       
+  271 |  2     font.s    172 | Data        | 00 |         |    4 | 00/021A : 0F FF FF F0 |                  hex   0FFFFFF0       
+  272 |  2     font.s    173 | Data        | 00 |         |    4 | 00/021E : 00 F0 0F 00 |                  hex   00F00F00       
+  273 |  2     font.s    174 | Empty       | 00 |         |    0 | 00/0222               |                                       
+  274 |  2     font.s    175 | Data        | 00 |         |    4 | 00/0222 : 00 0F 0F 00 | s_Dollar         hex   000F0F00       
+  275 |  2     font.s    176 | Data        | 00 |         |    4 | 00/0226 : 00 FF FF F0 |                  hex   00FFFFF0       
+  276 |  2     font.s    177 | Data        | 00 |         |    4 | 00/022A : 0F 0F 0F 00 |                  hex   0F0F0F00       
+  277 |  2     font.s    178 | Data        | 00 |         |    4 | 00/022E : 00 FF FF 00 |                  hex   00FFFF00       
+  278 |  2     font.s    179 | Data        | 00 |         |    4 | 00/0232 : 00 0F 0F F0 |                  hex   000F0FF0       
+  279 |  2     font.s    180 | Data        | 00 |         |    4 | 00/0236 : 0F FF FF 00 |                  hex   0FFFFF00       
+  280 |  2     font.s    181 | Empty       | 00 |         |    0 | 00/023A               |                                       
+  281 |  2     font.s    182 | Data        | 00 |         |    4 | 00/023A : 0F F0 00 F0 | s_Percent        hex   0FF000F0       
+  282 |  2     font.s    183 | Data        | 00 |         |    4 | 00/023E : 00 00 0F 00 |                  hex   00000F00       
+  283 |  2     font.s    184 | Data        | 00 |         |    4 | 00/0242 : 00 00 F0 00 |                  hex   0000F000       
+  284 |  2     font.s    185 | Data        | 00 |         |    4 | 00/0246 : 00 0F 00 00 |                  hex   000F0000       
+  285 |  2     font.s    186 | Data        | 00 |         |    4 | 00/024A : 00 F0 00 00 |                  hex   00F00000       
+  286 |  2     font.s    187 | Data        | 00 |         |    4 | 00/024E : 0F 00 0F F0 |                  hex   0F000FF0       
+  287 |  2     font.s    188 | Empty       | 00 |         |    0 | 00/0252               |                                       
+  288 |  2     font.s    189 | Data        | 00 |         |    4 | 00/0252 : 00 0F F0 00 | s_Amper          hex   000FF000       
+  289 |  2     font.s    190 | Data        | 00 |         |    4 | 00/0256 : 00 F0 0F 00 |                  hex   00F00F00       
+  290 |  2     font.s    191 | Data        | 00 |         |    4 | 00/025A : 0F 00 F0 00 |                  hex   0F00F000       
+  291 |  2     font.s    192 | Data        | 00 |         |    4 | 00/025E : 00 F0 00 F0 |                  hex   00F000F0       
+  292 |  2     font.s    193 | Data        | 00 |         |    4 | 00/0262 : 0F 0F FF 00 |                  hex   0F0FFF00       
+  293 |  2     font.s    194 | Data        | 00 |         |    4 | 00/0266 : 00 F0 F0 00 |                  hex   00F0F000       
+  294 |  2     font.s    195 | Empty       | 00 |         |    0 | 00/026A               |                                       
+  295 |  2     font.s    196 | Data        | 00 |         |    4 | 00/026A : 00 0F F0 00 | s_Single         hex   000FF000       
+  296 |  2     font.s    197 | Data        | 00 |         |    4 | 00/026E : 00 00 F0 00 |                  hex   0000F000       
+  297 |  2     font.s    198 | Data        | 00 |         |    4 | 00/0272 : 00 00 00 00 |                  hex   00000000       
+  298 |  2     font.s    199 | Data        | 00 |         |    4 | 00/0276 : 00 00 00 00 |                  hex   00000000       
+  299 |  2     font.s    200 | Data        | 00 |         |    4 | 00/027A : 00 00 00 00 |                  hex   00000000       
+  300 |  2     font.s    201 | Data        | 00 |         |    4 | 00/027E : 00 00 00 00 |                  hex   00000000       
+  301 |  2     font.s    202 | Empty       | 00 |         |    0 | 00/0282               |                                       
+  302 |  2     font.s    203 | Data        | 00 |         |    4 | 00/0282 : 00 0F F0 00 | s_OpenParen      hex   000FF000       
+  303 |  2     font.s    204 | Data        | 00 |         |    4 | 00/0286 : 00 FF 00 00 |                  hex   00FF0000       
+  304 |  2     font.s    205 | Data        | 00 |         |    4 | 00/028A : 0F F0 00 00 |                  hex   0FF00000       
+  305 |  2     font.s    206 | Data        | 00 |         |    4 | 00/028E : 0F F0 00 00 |                  hex   0FF00000       
+  306 |  2     font.s    207 | Data        | 00 |         |    4 | 00/0292 : 00 FF 00 00 |                  hex   00FF0000       
+  307 |  2     font.s    208 | Data        | 00 |         |    4 | 00/0296 : 00 0F F0 00 |                  hex   000FF000       
+  308 |  2     font.s    209 | Empty       | 00 |         |    0 | 00/029A               |                                       
+  309 |  2     font.s    210 | Data        | 00 |         |    4 | 00/029A : 00 0F F0 00 | s_CloseParen     hex   000FF000       
+  310 |  2     font.s    211 | Data        | 00 |         |    4 | 00/029E : 00 00 FF 00 |                  hex   0000FF00       
+  311 |  2     font.s    212 | Data        | 00 |         |    4 | 00/02A2 : 00 00 0F F0 |                  hex   00000FF0       
+  312 |  2     font.s    213 | Data        | 00 |         |    4 | 00/02A6 : 00 00 0F F0 |                  hex   00000FF0       
+  313 |  2     font.s    214 | Data        | 00 |         |    4 | 00/02AA : 00 00 FF 00 |                  hex   0000FF00       
+  314 |  2     font.s    215 | Data        | 00 |         |    4 | 00/02AE : 00 0F F0 00 |                  hex   000FF000       
+  315 |  2     font.s    216 | Empty       | 00 |         |    0 | 00/02B2               |                                       
+  316 |  2     font.s    217 | Empty       | 00 |         |    0 | 00/02B2               |                                       
+  317 |  2     font.s    218 | Data        | 00 |         |    4 | 00/02B2 : 00 00 00 00 | s_Asterix        hex   00000000       
+  318 |  2     font.s    219 | Data        | 00 |         |    4 | 00/02B6 : 00 F0 F0 F0 |                  hex   00F0F0F0       
+  319 |  2     font.s    220 | Data        | 00 |         |    4 | 00/02BA : 00 0F FF 00 |                  hex   000FFF00       
+  320 |  2     font.s    221 | Data        | 00 |         |    4 | 00/02BE : 00 FF FF F0 |                  hex   00FFFFF0       
+  321 |  2     font.s    222 | Data        | 00 |         |    4 | 00/02C2 : 00 0F FF 00 |                  hex   000FFF00       
+  322 |  2     font.s    223 | Data        | 00 |         |    4 | 00/02C6 : 00 F0 F0 F0 |                  hex   00F0F0F0       
+  323 |  2     font.s    224 | Empty       | 00 |         |    0 | 00/02CA               |                                       
+  324 |  2     font.s    225 | Data        | 00 |         |    4 | 00/02CA : 00 0F 00 00 | s_Plus           hex   000F0000       
+  325 |  2     font.s    226 | Data        | 00 |         |    4 | 00/02CE : 00 0F 00 00 |                  hex   000F0000       
+  326 |  2     font.s    227 | Data        | 00 |         |    4 | 00/02D2 : 0F FF FF 00 |                  hex   0FFFFF00       
+  327 |  2     font.s    228 | Data        | 00 |         |    4 | 00/02D6 : 00 0F 00 00 |                  hex   000F0000       
+  328 |  2     font.s    229 | Data        | 00 |         |    4 | 00/02DA : 00 0F 00 00 |                  hex   000F0000       
+  329 |  2     font.s    230 | Data        | 00 |         |    4 | 00/02DE : 00 00 00 00 |                  hex   00000000       
+  330 |  2     font.s    231 | Empty       | 00 |         |    0 | 00/02E2               |                                       
+  331 |  2     font.s    232 | Data        | 00 |         |    4 | 00/02E2 : 00 00 00 00 | s_Comma          hex   00000000       
+  332 |  2     font.s    233 | Data        | 00 |         |    4 | 00/02E6 : 00 00 00 00 |                  hex   00000000       
+  333 |  2     font.s    234 | Data        | 00 |         |    4 | 00/02EA : 00 00 00 00 |                  hex   00000000       
+  334 |  2     font.s    235 | Data        | 00 |         |    4 | 00/02EE : 00 00 00 00 |                  hex   00000000       
+  335 |  2     font.s    236 | Data        | 00 |         |    4 | 00/02F2 : 00 00 FF 00 |                  hex   0000FF00       
+  336 |  2     font.s    237 | Data        | 00 |         |    4 | 00/02F6 : 00 00 F0 00 |                  hex   0000F000       
+  337 |  2     font.s    238 | Empty       | 00 |         |    0 | 00/02FA               |                                       
+  338 |  2     font.s    239 | Data        | 00 |         |    4 | 00/02FA : 00 00 00 00 | s_Minus          hex   00000000       
+  339 |  2     font.s    240 | Data        | 00 |         |    4 | 00/02FE : 00 00 00 00 |                  hex   00000000       
+  340 |  2     font.s    241 | Data        | 00 |         |    4 | 00/0302 : 0F FF FF 00 |                  hex   0FFFFF00       
+  341 |  2     font.s    242 | Data        | 00 |         |    4 | 00/0306 : 00 00 00 00 |                  hex   00000000       
+  342 |  2     font.s    243 | Data        | 00 |         |    4 | 00/030A : 00 00 00 00 |                  hex   00000000       
+  343 |  2     font.s    244 | Data        | 00 |         |    4 | 00/030E : 00 00 00 00 |                  hex   00000000       
+  344 |  2     font.s    245 | Empty       | 00 |         |    0 | 00/0312               |                                       
+  345 |  2     font.s    246 | Empty       | 00 |         |    0 | 00/0312               |                                       
+  346 |  2     font.s    247 | Data        | 00 |         |    4 | 00/0312 : 00 00 00 00 | s_Period         hex   00000000       
+  347 |  2     font.s    248 | Data        | 00 |         |    4 | 00/0316 : 00 00 00 00 |                  hex   00000000       
+  348 |  2     font.s    249 | Data        | 00 |         |    4 | 00/031A : 00 00 00 00 |                  hex   00000000       
+  349 |  2     font.s    250 | Data        | 00 |         |    4 | 00/031E : 00 00 00 00 |                  hex   00000000       
+  350 |  2     font.s    251 | Data        | 00 |         |    4 | 00/0322 : 00 00 FF 00 |                  hex   0000FF00       
+  351 |  2     font.s    252 | Data        | 00 |         |    4 | 00/0326 : 00 00 FF 00 |                  hex   0000FF00       
+  352 |  2     font.s    253 | Empty       | 00 |         |    0 | 00/032A               |                                       
+  353 |  2     font.s    254 | Data        | 00 |         |    4 | 00/032A : 00 00 00 F0 | s_Slash          hex   000000F0       
+  354 |  2     font.s    255 | Data        | 00 |         |    4 | 00/032E : 00 00 0F 00 |                  hex   00000F00       
+  355 |  2     font.s    256 | Data        | 00 |         |    4 | 00/0332 : 00 00 F0 00 |                  hex   0000F000       
+  356 |  2     font.s    257 | Data        | 00 |         |    4 | 00/0336 : 00 0F 00 00 |                  hex   000F0000       
+  357 |  2     font.s    258 | Data        | 00 |         |    4 | 00/033A : 00 F0 00 00 |                  hex   00F00000       
+  358 |  2     font.s    259 | Data        | 00 |         |    4 | 00/033E : 0F 00 00 00 |                  hex   0F000000       
+  359 |  2     font.s    260 | Empty       | 00 |         |    0 | 00/0342               |                                       
+  360 |  2     font.s    261 | Data        | 00 |         |    4 | 00/0342 : 00 FF FF 00 | s_N0             hex   00FFFF00       
+  361 |  2     font.s    262 | Data        | 00 |         |    4 | 00/0346 : 0F 00 0F F0 |                  hex   0F000FF0       
+  362 |  2     font.s    263 | Data        | 00 |         |    4 | 00/034A : 0F 00 F0 F0 |                  hex   0F00F0F0       
+  363 |  2     font.s    264 | Data        | 00 |         |    4 | 00/034E : 0F 0F 00 F0 |                  hex   0F0F00F0       
+  364 |  2     font.s    265 | Data        | 00 |         |    4 | 00/0352 : 0F F0 00 F0 |                  hex   0FF000F0       
+  365 |  2     font.s    266 | Data        | 00 |         |    4 | 00/0356 : 00 FF FF 00 |                  hex   00FFFF00       
+  366 |  2     font.s    267 | Empty       | 00 |         |    0 | 00/035A               |                                       
+  367 |  2     font.s    268 | Data        | 00 |         |    4 | 00/035A : 00 0F 00 00 | s_N1             hex   000F0000       
+  368 |  2     font.s    269 | Data        | 00 |         |    4 | 00/035E : 00 FF 00 00 |                  hex   00FF0000       
+  369 |  2     font.s    270 | Data        | 00 |         |    4 | 00/0362 : 00 0F 00 00 |                  hex   000F0000       
+  370 |  2     font.s    271 | Data        | 00 |         |    4 | 00/0366 : 00 0F 00 00 |                  hex   000F0000       
+  371 |  2     font.s    272 | Data        | 00 |         |    4 | 00/036A : 00 0F 00 00 |                  hex   000F0000       
+  372 |  2     font.s    273 | Data        | 00 |         |    4 | 00/036E : 00 FF F0 00 |                  hex   00FFF000       
+  373 |  2     font.s    274 | Empty       | 00 |         |    0 | 00/0372               |                                       
+  374 |  2     font.s    275 | Data        | 00 |         |    4 | 00/0372 : 00 FF FF 00 | s_N2             hex   00FFFF00       
+  375 |  2     font.s    276 | Data        | 00 |         |    4 | 00/0376 : 0F 00 00 F0 |                  hex   0F0000F0       
+  376 |  2     font.s    277 | Data        | 00 |         |    4 | 00/037A : 00 00 0F 00 |                  hex   00000F00       
+  377 |  2     font.s    278 | Data        | 00 |         |    4 | 00/037E : 00 0F F0 00 |                  hex   000FF000       
+  378 |  2     font.s    279 | Data        | 00 |         |    4 | 00/0382 : 00 F0 00 00 |                  hex   00F00000       
+  379 |  2     font.s    280 | Data        | 00 |         |    4 | 00/0386 : 0F FF FF F0 |                  hex   0FFFFFF0       
+  380 |  2     font.s    281 | Empty       | 00 |         |    0 | 00/038A               |                                       
+  381 |  2     font.s    282 | Data        | 00 |         |    4 | 00/038A : 00 FF FF 00 | s_N3             hex   00FFFF00       
+  382 |  2     font.s    283 | Data        | 00 |         |    4 | 00/038E : 00 00 00 F0 |                  hex   000000F0       
+  383 |  2     font.s    284 | Data        | 00 |         |    4 | 00/0392 : 00 0F FF 00 |                  hex   000FFF00       
+  384 |  2     font.s    285 | Data        | 00 |         |    4 | 00/0396 : 00 00 00 F0 |                  hex   000000F0       
+  385 |  2     font.s    286 | Data        | 00 |         |    4 | 00/039A : 00 00 00 F0 |                  hex   000000F0       
+  386 |  2     font.s    287 | Data        | 00 |         |    4 | 00/039E : 00 FF FF 00 |                  hex   00FFFF00       
+  387 |  2     font.s    288 | Empty       | 00 |         |    0 | 00/03A2               |                                       
+  388 |  2     font.s    289 | Data        | 00 |         |    4 | 00/03A2 : 00 00 FF 00 | s_N4             hex   0000FF00       
+  389 |  2     font.s    290 | Data        | 00 |         |    4 | 00/03A6 : 00 0F 0F 00 |                  hex   000F0F00       
+  390 |  2     font.s    291 | Data        | 00 |         |    4 | 00/03AA : 00 F0 0F 00 |                  hex   00F00F00       
+  391 |  2     font.s    292 | Data        | 00 |         |    4 | 00/03AE : 0F FF FF F0 |                  hex   0FFFFFF0       
+  392 |  2     font.s    293 | Data        | 00 |         |    4 | 00/03B2 : 00 00 0F 00 |                  hex   00000F00       
+  393 |  2     font.s    294 | Data        | 00 |         |    4 | 00/03B6 : 00 00 0F 00 |                  hex   00000F00       
+  394 |  2     font.s    295 | Empty       | 00 |         |    0 | 00/03BA               |                                       
+  395 |  2     font.s    296 | Data        | 00 |         |    4 | 00/03BA : 0F FF FF F0 | s_N5             hex   0FFFFFF0       
+  396 |  2     font.s    297 | Data        | 00 |         |    4 | 00/03BE : 0F 00 00 00 |                  hex   0F000000       
+  397 |  2     font.s    298 | Data        | 00 |         |    4 | 00/03C2 : 0F FF FF 00 |                  hex   0FFFFF00       
+  398 |  2     font.s    299 | Data        | 00 |         |    4 | 00/03C6 : 00 00 00 F0 |                  hex   000000F0       
+  399 |  2     font.s    300 | Data        | 00 |         |    4 | 00/03CA : 0F 00 00 F0 |                  hex   0F0000F0       
+  400 |  2     font.s    301 | Data        | 00 |         |    4 | 00/03CE : 00 FF FF 00 |                  hex   00FFFF00       
+  401 |  2     font.s    302 | Empty       | 00 |         |    0 | 00/03D2               |                                       
+  402 |  2     font.s    303 | Data        | 00 |         |    4 | 00/03D2 : 00 0F FF 00 | s_N6             hex   000FFF00       
+  403 |  2     font.s    304 | Data        | 00 |         |    4 | 00/03D6 : 00 F0 00 00 |                  hex   00F00000       
+  404 |  2     font.s    305 | Data        | 00 |         |    4 | 00/03DA : 0F 00 00 00 |                  hex   0F000000       
+  405 |  2     font.s    306 | Data        | 00 |         |    4 | 00/03DE : 0F FF FF 00 |                  hex   0FFFFF00       
+  406 |  2     font.s    307 | Data        | 00 |         |    4 | 00/03E2 : 0F 00 00 F0 |                  hex   0F0000F0       
+  407 |  2     font.s    308 | Data        | 00 |         |    4 | 00/03E6 : 00 FF FF F0 |                  hex   00FFFFF0       
+  408 |  2     font.s    309 | Empty       | 00 |         |    0 | 00/03EA               |                                       
+  409 |  2     font.s    310 | Data        | 00 |         |    4 | 00/03EA : 0F FF FF F0 | s_N7             hex   0FFFFFF0       
+  410 |  2     font.s    311 | Data        | 00 |         |    4 | 00/03EE : 00 00 00 F0 |                  hex   000000F0       
+  411 |  2     font.s    312 | Data        | 00 |         |    4 | 00/03F2 : 00 00 0F 00 |                  hex   00000F00       
+  412 |  2     font.s    313 | Data        | 00 |         |    4 | 00/03F6 : 00 00 F0 00 |                  hex   0000F000       
+  413 |  2     font.s    314 | Data        | 00 |         |    4 | 00/03FA : 00 0F 00 00 |                  hex   000F0000       
+  414 |  2     font.s    315 | Data        | 00 |         |    4 | 00/03FE : 00 0F 00 00 |                  hex   000F0000       
+  415 |  2     font.s    316 | Empty       | 00 |         |    0 | 00/0402               |                                       
+  416 |  2     font.s    317 | Data        | 00 |         |    4 | 00/0402 : 00 FF FF 00 | s_N8             hex   00FFFF00       
+  417 |  2     font.s    318 | Data        | 00 |         |    4 | 00/0406 : 0F 00 00 F0 |                  hex   0F0000F0       
+  418 |  2     font.s    319 | Data        | 00 |         |    4 | 00/040A : 00 FF FF 00 |                  hex   00FFFF00       
+  419 |  2     font.s    320 | Data        | 00 |         |    4 | 00/040E : 0F 00 00 F0 |                  hex   0F0000F0       
+  420 |  2     font.s    321 | Data        | 00 |         |    4 | 00/0412 : 0F 00 00 F0 |                  hex   0F0000F0       
+  421 |  2     font.s    322 | Data        | 00 |         |    4 | 00/0416 : 00 FF FF 00 |                  hex   00FFFF00       
+  422 |  2     font.s    323 | Empty       | 00 |         |    0 | 00/041A               |                                       
+  423 |  2     font.s    324 | Data        | 00 |         |    4 | 00/041A : 00 FF FF 00 | s_N9             hex   00FFFF00       
+  424 |  2     font.s    325 | Data        | 00 |         |    4 | 00/041E : 0F 00 00 F0 |                  hex   0F0000F0       
+  425 |  2     font.s    326 | Data        | 00 |         |    4 | 00/0422 : 00 FF FF 00 |                  hex   00FFFF00       
+  426 |  2     font.s    327 | Data        | 00 |         |    4 | 00/0426 : 00 00 F0 00 |                  hex   0000F000       
+  427 |  2     font.s    328 | Data        | 00 |         |    4 | 00/042A : 00 0F 00 00 |                  hex   000F0000       
+  428 |  2     font.s    329 | Data        | 00 |         |    4 | 00/042E : 00 F0 00 00 |                  hex   00F00000       
+  429 |  2     font.s    330 | Empty       | 00 |         |    0 | 00/0432               |                                       
+  430 |  2     font.s    331 | Data        | 00 |         |    4 | 00/0432 : 00 0F F0 00 | s_Colon          hex   000FF000       
+  431 |  2     font.s    332 | Data        | 00 |         |    4 | 00/0436 : 00 0F F0 00 |                  hex   000FF000       
+  432 |  2     font.s    333 | Data        | 00 |         |    4 | 00/043A : 00 00 00 00 |                  hex   00000000       
+  433 |  2     font.s    334 | Data        | 00 |         |    4 | 00/043E : 00 0F F0 00 |                  hex   000FF000       
+  434 |  2     font.s    335 | Data        | 00 |         |    4 | 00/0442 : 00 0F F0 00 |                  hex   000FF000       
+  435 |  2     font.s    336 | Data        | 00 |         |    4 | 00/0446 : 00 00 00 00 |                  hex   00000000       
+  436 |  2     font.s    337 | Empty       | 00 |         |    0 | 00/044A               |                                       
+  437 |  2     font.s    338 | Data        | 00 |         |    4 | 00/044A : 00 00 00 00 | s_Semi           hex   00000000       
+  438 |  2     font.s    339 | Data        | 00 |         |    4 | 00/044E : 00 0F F0 00 |                  hex   000FF000       
+  439 |  2     font.s    340 | Data        | 00 |         |    4 | 00/0452 : 00 0F F0 00 |                  hex   000FF000       
+  440 |  2     font.s    341 | Data        | 00 |         |    4 | 00/0456 : 00 00 00 00 |                  hex   00000000       
+  441 |  2     font.s    342 | Data        | 00 |         |    4 | 00/045A : 00 0F F0 00 |                  hex   000FF000       
+  442 |  2     font.s    343 | Data        | 00 |         |    4 | 00/045E : 00 0F 00 00 |                  hex   000F0000       
+  443 |  2     font.s    344 | Empty       | 00 |         |    0 | 00/0462               |                                       
+  444 |  2     font.s    345 | Data        | 00 |         |    4 | 00/0462 : 00 00 F0 00 | s_LAngle         hex   0000F000       
+  445 |  2     font.s    346 | Data        | 00 |         |    4 | 00/0466 : 00 0F 00 00 |                  hex   000F0000       
+  446 |  2     font.s    347 | Data        | 00 |         |    4 | 00/046A : 00 F0 00 00 |                  hex   00F00000       
+  447 |  2     font.s    348 | Data        | 00 |         |    4 | 00/046E : 00 0F 00 00 |                  hex   000F0000       
+  448 |  2     font.s    349 | Data        | 00 |         |    4 | 00/0472 : 00 00 F0 00 |                  hex   0000F000       
+  449 |  2     font.s    350 | Data        | 00 |         |    4 | 00/0476 : 00 00 00 00 |                  hex   00000000       
+  450 |  2     font.s    351 | Empty       | 00 |         |    0 | 00/047A               |                                       
+  451 |  2     font.s    352 | Data        | 00 |         |    4 | 00/047A : 00 00 00 00 | s_Equal          hex   00000000       
+  452 |  2     font.s    353 | Data        | 00 |         |    4 | 00/047E : 00 00 00 00 |                  hex   00000000       
+  453 |  2     font.s    354 | Data        | 00 |         |    4 | 00/0482 : 0F FF FF 00 |                  hex   0FFFFF00       
+  454 |  2     font.s    355 | Data        | 00 |         |    4 | 00/0486 : 00 00 00 00 |                  hex   00000000       
+  455 |  2     font.s    356 | Data        | 00 |         |    4 | 00/048A : 0F FF FF 00 |                  hex   0FFFFF00       
+  456 |  2     font.s    357 | Data        | 00 |         |    4 | 00/048E : 00 00 00 00 |                  hex   00000000       
+  457 |  2     font.s    358 | Empty       | 00 |         |    0 | 00/0492               |                                       
+  458 |  2     font.s    359 | Data        | 00 |         |    4 | 00/0492 : 00 00 F0 00 | s_RAngle         hex   0000F000       
+  459 |  2     font.s    360 | Data        | 00 |         |    4 | 00/0496 : 00 00 0F 00 |                  hex   00000F00       
+  460 |  2     font.s    361 | Data        | 00 |         |    4 | 00/049A : 00 00 00 F0 |                  hex   000000F0       
+  461 |  2     font.s    362 | Data        | 00 |         |    4 | 00/049E : 00 00 0F 00 |                  hex   00000F00       
+  462 |  2     font.s    363 | Data        | 00 |         |    4 | 00/04A2 : 00 00 F0 00 |                  hex   0000F000       
+  463 |  2     font.s    364 | Data        | 00 |         |    4 | 00/04A6 : 00 00 00 00 |                  hex   00000000       
+  464 |  2     font.s    365 | Empty       | 00 |         |    0 | 00/04AA               |                                       
+  465 |  2     font.s    366 | Data        | 00 |         |    4 | 00/04AA : 00 FF F0 00 | s_Question       hex   00FFF000       
+  466 |  2     font.s    367 | Data        | 00 |         |    4 | 00/04AE : 0F 00 0F 00 |                  hex   0F000F00       
+  467 |  2     font.s    368 | Data        | 00 |         |    4 | 00/04B2 : 00 00 0F 00 |                  hex   00000F00       
+  468 |  2     font.s    369 | Data        | 00 |         |    4 | 00/04B6 : 00 0F F0 00 |                  hex   000FF000       
+  469 |  2     font.s    370 | Data        | 00 |         |    4 | 00/04BA : 00 00 00 00 |                  hex   00000000       
+  470 |  2     font.s    371 | Data        | 00 |         |    4 | 00/04BE : 00 0F F0 00 |                  hex   000FF000       
+  471 |  2     font.s    372 | Empty       | 00 |         |    0 | 00/04C2               |                                       
+  472 |  2     font.s    373 | Data        | 00 |         |    4 | 00/04C2 : 00 FF FF 00 | s_At             hex   00FFFF00       
+  473 |  2     font.s    374 | Data        | 00 |         |    4 | 00/04C6 : 0F 00 00 F0 |                  hex   0F0000F0       
+  474 |  2     font.s    375 | Data        | 00 |         |    4 | 00/04CA : 0F 00 F0 F0 |                  hex   0F00F0F0       
+  475 |  2     font.s    376 | Data        | 00 |         |    4 | 00/04CE : 0F FF F0 F0 |                  hex   0FFFF0F0       
+  476 |  2     font.s    377 | Data        | 00 |         |    4 | 00/04D2 : 00 00 00 F0 |                  hex   000000F0       
+  477 |  2     font.s    378 | Data        | 00 |         |    4 | 00/04D6 : 0F FF FF 00 |                  hex   0FFFFF00       
+  478 |  2     font.s    379 | Empty       | 00 |         |    0 | 00/04DA               |                                       
+  479 |  2     font.s    380 | Data        | 00 |         |    4 | 00/04DA : 00 0F F0 00 | s_A              hex   000FF000       
+  480 |  2     font.s    381 | Data        | 00 |         |    4 | 00/04DE : 00 F0 0F 00 |                  hex   00F00F00       
+  481 |  2     font.s    382 | Data        | 00 |         |    4 | 00/04E2 : 0F 00 00 F0 |                  hex   0F0000F0       
+  482 |  2     font.s    383 | Data        | 00 |         |    4 | 00/04E6 : 0F FF FF F0 |                  hex   0FFFFFF0       
+  483 |  2     font.s    384 | Data        | 00 |         |    4 | 00/04EA : 0F 00 00 F0 |                  hex   0F0000F0       
+  484 |  2     font.s    385 | Data        | 00 |         |    4 | 00/04EE : 0F 00 00 F0 |                  hex   0F0000F0       
+  485 |  2     font.s    386 | Empty       | 00 |         |    0 | 00/04F2               |                                       
+  486 |  2     font.s    387 | Data        | 00 |         |    4 | 00/04F2 : 0F FF FF 00 | s_B              hex   0FFFFF00       
+  487 |  2     font.s    388 | Data        | 00 |         |    4 | 00/04F6 : 0F 00 00 F0 |                  hex   0F0000F0       
+  488 |  2     font.s    389 | Data        | 00 |         |    4 | 00/04FA : 0F FF FF 00 |                  hex   0FFFFF00       
+  489 |  2     font.s    390 | Data        | 00 |         |    4 | 00/04FE : 0F 00 00 F0 |                  hex   0F0000F0       
+  490 |  2     font.s    391 | Data        | 00 |         |    4 | 00/0502 : 0F 00 00 F0 |                  hex   0F0000F0       
+  491 |  2     font.s    392 | Data        | 00 |         |    4 | 00/0506 : 0F FF FF 00 |                  hex   0FFFFF00       
+  492 |  2     font.s    393 | Empty       | 00 |         |    0 | 00/050A               |                                       
+  493 |  2     font.s    394 | Data        | 00 |         |    4 | 00/050A : 00 FF FF F0 | s_C              hex   00FFFFF0       
+  494 |  2     font.s    395 | Data        | 00 |         |    4 | 00/050E : 0F 00 00 00 |                  hex   0F000000       
+  495 |  2     font.s    396 | Data        | 00 |         |    4 | 00/0512 : 0F 00 00 00 |                  hex   0F000000       
+  496 |  2     font.s    397 | Data        | 00 |         |    4 | 00/0516 : 0F 00 00 00 |                  hex   0F000000       
+  497 |  2     font.s    398 | Data        | 00 |         |    4 | 00/051A : 0F 00 00 00 |                  hex   0F000000       
+  498 |  2     font.s    399 | Data        | 00 |         |    4 | 00/051E : 00 FF FF F0 |                  hex   00FFFFF0       
+  499 |  2     font.s    400 | Empty       | 00 |         |    0 | 00/0522               |                                       
+  500 |  2     font.s    401 | Data        | 00 |         |    4 | 00/0522 : 0F FF FF 00 | s_D              hex   0FFFFF00       
+  501 |  2     font.s    402 | Data        | 00 |         |    4 | 00/0526 : 0F 00 00 F0 |                  hex   0F0000F0       
+  502 |  2     font.s    403 | Data        | 00 |         |    4 | 00/052A : 0F 00 00 F0 |                  hex   0F0000F0       
+  503 |  2     font.s    404 | Data        | 00 |         |    4 | 00/052E : 0F 00 00 F0 |                  hex   0F0000F0       
+  504 |  2     font.s    405 | Data        | 00 |         |    4 | 00/0532 : 0F 00 00 F0 |                  hex   0F0000F0       
+  505 |  2     font.s    406 | Data        | 00 |         |    4 | 00/0536 : 0F FF FF 00 |                  hex   0FFFFF00       
+  506 |  2     font.s    407 | Empty       | 00 |         |    0 | 00/053A               |                                       
+  507 |  2     font.s    408 | Data        | 00 |         |    4 | 00/053A : 0F FF FF F0 | s_E              hex   0FFFFFF0       
+  508 |  2     font.s    409 | Data        | 00 |         |    4 | 00/053E : 0F 00 00 00 |                  hex   0F000000       
+  509 |  2     font.s    410 | Data        | 00 |         |    4 | 00/0542 : 0F FF F0 00 |                  hex   0FFFF000       
+  510 |  2     font.s    411 | Data        | 00 |         |    4 | 00/0546 : 0F 00 00 00 |                  hex   0F000000       
+  511 |  2     font.s    412 | Data        | 00 |         |    4 | 00/054A : 0F 00 00 00 |                  hex   0F000000       
+  512 |  2     font.s    413 | Data        | 00 |         |    4 | 00/054E : 0F FF FF F0 |                  hex   0FFFFFF0       
+  513 |  2     font.s    414 | Empty       | 00 |         |    0 | 00/0552               |                                       
+  514 |  2     font.s    415 | Data        | 00 |         |    4 | 00/0552 : 0F FF FF F0 | s_F              hex   0FFFFFF0       
+  515 |  2     font.s    416 | Data        | 00 |         |    4 | 00/0556 : 0F 00 00 00 |                  hex   0F000000       
+  516 |  2     font.s    417 | Data        | 00 |         |    4 | 00/055A : 0F FF F0 00 |                  hex   0FFFF000       
+  517 |  2     font.s    418 | Data        | 00 |         |    4 | 00/055E : 0F 00 00 00 |                  hex   0F000000       
+  518 |  2     font.s    419 | Data        | 00 |         |    4 | 00/0562 : 0F 00 00 00 |                  hex   0F000000       
+  519 |  2     font.s    420 | Data        | 00 |         |    4 | 00/0566 : 0F 00 00 00 |                  hex   0F000000       
+  520 |  2     font.s    421 | Empty       | 00 |         |    0 | 00/056A               |                                       
+  521 |  2     font.s    422 | Data        | 00 |         |    4 | 00/056A : 00 FF FF F0 | s_G              hex   00FFFFF0       
+  522 |  2     font.s    423 | Data        | 00 |         |    4 | 00/056E : 0F 00 00 00 |                  hex   0F000000       
+  523 |  2     font.s    424 | Data        | 00 |         |    4 | 00/0572 : 0F 00 00 00 |                  hex   0F000000       
+  524 |  2     font.s    425 | Data        | 00 |         |    4 | 00/0576 : 0F 00 FF F0 |                  hex   0F00FFF0       
+  525 |  2     font.s    426 | Data        | 00 |         |    4 | 00/057A : 0F 00 00 F0 |                  hex   0F0000F0       
+  526 |  2     font.s    427 | Data        | 00 |         |    4 | 00/057E : 00 FF FF 00 |                  hex   00FFFF00       
+  527 |  2     font.s    428 | Empty       | 00 |         |    0 | 00/0582               |                                       
+  528 |  2     font.s    429 | Data        | 00 |         |    4 | 00/0582 : 0F 00 00 F0 | s_H              hex   0F0000F0       
+  529 |  2     font.s    430 | Data        | 00 |         |    4 | 00/0586 : 0F 00 00 F0 |                  hex   0F0000F0       
+  530 |  2     font.s    431 | Data        | 00 |         |    4 | 00/058A : 0F FF FF F0 |                  hex   0FFFFFF0       
+  531 |  2     font.s    432 | Data        | 00 |         |    4 | 00/058E : 0F 00 00 F0 |                  hex   0F0000F0       
+  532 |  2     font.s    433 | Data        | 00 |         |    4 | 00/0592 : 0F 00 00 F0 |                  hex   0F0000F0       
+  533 |  2     font.s    434 | Data        | 00 |         |    4 | 00/0596 : 0F 00 00 F0 |                  hex   0F0000F0       
+  534 |  2     font.s    435 | Empty       | 00 |         |    0 | 00/059A               |                                       
+  535 |  2     font.s    436 | Data        | 00 |         |    4 | 00/059A : 0F FF FF 00 | s_I              hex   0FFFFF00       
+  536 |  2     font.s    437 | Data        | 00 |         |    4 | 00/059E : 00 0F 00 00 |                  hex   000F0000       
+  537 |  2     font.s    438 | Data        | 00 |         |    4 | 00/05A2 : 00 0F 00 00 |                  hex   000F0000       
+  538 |  2     font.s    439 | Data        | 00 |         |    4 | 00/05A6 : 00 0F 00 00 |                  hex   000F0000       
+  539 |  2     font.s    440 | Data        | 00 |         |    4 | 00/05AA : 00 0F 00 00 |                  hex   000F0000       
+  540 |  2     font.s    441 | Data        | 00 |         |    4 | 00/05AE : 0F FF FF 00 |                  hex   0FFFFF00       
+  541 |  2     font.s    442 | Empty       | 00 |         |    0 | 00/05B2               |                                       
+  542 |  2     font.s    443 | Data        | 00 |         |    4 | 00/05B2 : 00 00 00 F0 | s_J              hex   000000F0       
+  543 |  2     font.s    444 | Data        | 00 |         |    4 | 00/05B6 : 00 00 00 F0 |                  hex   000000F0       
+  544 |  2     font.s    445 | Data        | 00 |         |    4 | 00/05BA : 00 00 00 F0 |                  hex   000000F0       
+  545 |  2     font.s    446 | Data        | 00 |         |    4 | 00/05BE : 0F 00 00 F0 |                  hex   0F0000F0       
+  546 |  2     font.s    447 | Data        | 00 |         |    4 | 00/05C2 : 0F 00 00 F0 |                  hex   0F0000F0       
+  547 |  2     font.s    448 | Data        | 00 |         |    4 | 00/05C6 : 00 FF FF 00 |                  hex   00FFFF00       
+  548 |  2     font.s    449 | Empty       | 00 |         |    0 | 00/05CA               |                                       
+  549 |  2     font.s    450 | Data        | 00 |         |    4 | 00/05CA : 0F 00 0F 00 | s_K              hex   0F000F00       
+  550 |  2     font.s    451 | Data        | 00 |         |    4 | 00/05CE : 0F 00 F0 00 |                  hex   0F00F000       
+  551 |  2     font.s    452 | Data        | 00 |         |    4 | 00/05D2 : 0F FF 00 00 |                  hex   0FFF0000       
+  552 |  2     font.s    453 | Data        | 00 |         |    4 | 00/05D6 : 0F 00 F0 00 |                  hex   0F00F000       
+  553 |  2     font.s    454 | Data        | 00 |         |    4 | 00/05DA : 0F 00 0F 00 |                  hex   0F000F00       
+  554 |  2     font.s    455 | Data        | 00 |         |    4 | 00/05DE : 0F 00 0F 00 |                  hex   0F000F00       
+  555 |  2     font.s    456 | Empty       | 00 |         |    0 | 00/05E2               |                                       
+  556 |  2     font.s    457 | Data        | 00 |         |    4 | 00/05E2 : 0F 00 00 00 | s_L              hex   0F000000       
+  557 |  2     font.s    458 | Data        | 00 |         |    4 | 00/05E6 : 0F 00 00 00 |                  hex   0F000000       
+  558 |  2     font.s    459 | Data        | 00 |         |    4 | 00/05EA : 0F 00 00 00 |                  hex   0F000000       
+  559 |  2     font.s    460 | Data        | 00 |         |    4 | 00/05EE : 0F 00 00 00 |                  hex   0F000000       
+  560 |  2     font.s    461 | Data        | 00 |         |    4 | 00/05F2 : 0F 00 00 00 |                  hex   0F000000       
+  561 |  2     font.s    462 | Data        | 00 |         |    4 | 00/05F6 : 0F FF FF F0 |                  hex   0FFFFFF0       
+  562 |  2     font.s    463 | Empty       | 00 |         |    0 | 00/05FA               |                                       
+  563 |  2     font.s    464 | Data        | 00 |         |    4 | 00/05FA : 0F 00 00 F0 | s_M              hex   0F0000F0       
+  564 |  2     font.s    465 | Data        | 00 |         |    4 | 00/05FE : 0F F0 0F F0 |                  hex   0FF00FF0       
+  565 |  2     font.s    466 | Data        | 00 |         |    4 | 00/0602 : 0F 0F F0 F0 |                  hex   0F0FF0F0       
+  566 |  2     font.s    467 | Data        | 00 |         |    4 | 00/0606 : 0F 00 00 F0 |                  hex   0F0000F0       
+  567 |  2     font.s    468 | Data        | 00 |         |    4 | 00/060A : 0F 00 00 F0 |                  hex   0F0000F0       
+  568 |  2     font.s    469 | Data        | 00 |         |    4 | 00/060E : 0F 00 00 F0 |                  hex   0F0000F0       
+  569 |  2     font.s    470 | Empty       | 00 |         |    0 | 00/0612               |                                       
+  570 |  2     font.s    471 | Data        | 00 |         |    4 | 00/0612 : 0F 00 00 F0 | s_N              hex   0F0000F0       
+  571 |  2     font.s    472 | Data        | 00 |         |    4 | 00/0616 : 0F F0 00 F0 |                  hex   0FF000F0       
+  572 |  2     font.s    473 | Data        | 00 |         |    4 | 00/061A : 0F 0F 00 F0 |                  hex   0F0F00F0       
+  573 |  2     font.s    474 | Data        | 00 |         |    4 | 00/061E : 0F 00 F0 F0 |                  hex   0F00F0F0       
+  574 |  2     font.s    475 | Data        | 00 |         |    4 | 00/0622 : 0F 00 0F F0 |                  hex   0F000FF0       
+  575 |  2     font.s    476 | Data        | 00 |         |    4 | 00/0626 : 0F 00 00 F0 |                  hex   0F0000F0       
+  576 |  2     font.s    477 | Empty       | 00 |         |    0 | 00/062A               |                                       
+  577 |  2     font.s    478 | Data        | 00 |         |    4 | 00/062A : 00 FF FF 00 | s_O              hex   00FFFF00       
+  578 |  2     font.s    479 | Data        | 00 |         |    4 | 00/062E : 0F 00 00 F0 |                  hex   0F0000F0       
+  579 |  2     font.s    480 | Data        | 00 |         |    4 | 00/0632 : 0F 00 00 F0 |                  hex   0F0000F0       
+  580 |  2     font.s    481 | Data        | 00 |         |    4 | 00/0636 : 0F 00 00 F0 |                  hex   0F0000F0       
+  581 |  2     font.s    482 | Data        | 00 |         |    4 | 00/063A : 0F 00 00 F0 |                  hex   0F0000F0       
+  582 |  2     font.s    483 | Data        | 00 |         |    4 | 00/063E : 00 FF FF 00 |                  hex   00FFFF00       
+  583 |  2     font.s    484 | Empty       | 00 |         |    0 | 00/0642               |                                       
+  584 |  2     font.s    485 | Data        | 00 |         |    4 | 00/0642 : 0F FF FF 00 | s_P              hex   0FFFFF00       
+  585 |  2     font.s    486 | Data        | 00 |         |    4 | 00/0646 : 0F 00 00 F0 |                  hex   0F0000F0       
+  586 |  2     font.s    487 | Data        | 00 |         |    4 | 00/064A : 0F FF FF 00 |                  hex   0FFFFF00       
+  587 |  2     font.s    488 | Data        | 00 |         |    4 | 00/064E : 0F 00 00 00 |                  hex   0F000000       
+  588 |  2     font.s    489 | Data        | 00 |         |    4 | 00/0652 : 0F 00 00 00 |                  hex   0F000000       
+  589 |  2     font.s    490 | Data        | 00 |         |    4 | 00/0656 : 0F 00 00 00 |                  hex   0F000000       
+  590 |  2     font.s    491 | Empty       | 00 |         |    0 | 00/065A               |                                       
+  591 |  2     font.s    492 | Data        | 00 |         |    4 | 00/065A : 00 FF FF 00 | s_Q              hex   00FFFF00       
+  592 |  2     font.s    493 | Data        | 00 |         |    4 | 00/065E : 0F 00 00 F0 |                  hex   0F0000F0       
+  593 |  2     font.s    494 | Data        | 00 |         |    4 | 00/0662 : 0F 00 00 F0 |                  hex   0F0000F0       
+  594 |  2     font.s    495 | Data        | 00 |         |    4 | 00/0666 : 0F 00 F0 F0 |                  hex   0F00F0F0       
+  595 |  2     font.s    496 | Data        | 00 |         |    4 | 00/066A : 0F 00 0F F0 |                  hex   0F000FF0       
+  596 |  2     font.s    497 | Data        | 00 |         |    4 | 00/066E : 00 FF FF F0 |                  hex   00FFFFF0       
+  597 |  2     font.s    498 | Empty       | 00 |         |    0 | 00/0672               |                                       
+  598 |  2     font.s    499 | Data        | 00 |         |    4 | 00/0672 : 0F FF FF 00 | s_R              hex   0FFFFF00       
+  599 |  2     font.s    500 | Data        | 00 |         |    4 | 00/0676 : 0F 00 00 F0 |                  hex   0F0000F0       
+  600 |  2     font.s    501 | Data        | 00 |         |    4 | 00/067A : 0F FF FF 00 |                  hex   0FFFFF00       
+  601 |  2     font.s    502 | Data        | 00 |         |    4 | 00/067E : 0F 00 0F 00 |                  hex   0F000F00       
+  602 |  2     font.s    503 | Data        | 00 |         |    4 | 00/0682 : 0F 00 00 F0 |                  hex   0F0000F0       
+  603 |  2     font.s    504 | Data        | 00 |         |    4 | 00/0686 : 0F 00 00 F0 |                  hex   0F0000F0       
+  604 |  2     font.s    505 | Empty       | 00 |         |    0 | 00/068A               |                                       
+  605 |  2     font.s    506 | Data        | 00 |         |    4 | 00/068A : 00 FF FF F0 | s_S              hex   00FFFFF0       
+  606 |  2     font.s    507 | Data        | 00 |         |    4 | 00/068E : 0F 00 00 00 |                  hex   0F000000       
+  607 |  2     font.s    508 | Data        | 00 |         |    4 | 00/0692 : 00 FF FF 00 |                  hex   00FFFF00       
+  608 |  2     font.s    509 | Data        | 00 |         |    4 | 00/0696 : 00 00 00 F0 |                  hex   000000F0       
+  609 |  2     font.s    510 | Data        | 00 |         |    4 | 00/069A : 00 00 00 F0 |                  hex   000000F0       
+  610 |  2     font.s    511 | Data        | 00 |         |    4 | 00/069E : 0F FF FF 00 |                  hex   0FFFFF00       
+  611 |  2     font.s    512 | Empty       | 00 |         |    0 | 00/06A2               |                                       
+  612 |  2     font.s    513 | Data        | 00 |         |    4 | 00/06A2 : 0F FF FF 00 | s_T              hex   0FFFFF00       
+  613 |  2     font.s    514 | Data        | 00 |         |    4 | 00/06A6 : 00 0F 00 00 |                  hex   000F0000       
+  614 |  2     font.s    515 | Data        | 00 |         |    4 | 00/06AA : 00 0F 00 00 |                  hex   000F0000       
+  615 |  2     font.s    516 | Data        | 00 |         |    4 | 00/06AE : 00 0F 00 00 |                  hex   000F0000       
+  616 |  2     font.s    517 | Data        | 00 |         |    4 | 00/06B2 : 00 0F 00 00 |                  hex   000F0000       
+  617 |  2     font.s    518 | Data        | 00 |         |    4 | 00/06B6 : 00 0F 00 00 |                  hex   000F0000       
+  618 |  2     font.s    519 | Empty       | 00 |         |    0 | 00/06BA               |                                       
+  619 |  2     font.s    520 | Data        | 00 |         |    4 | 00/06BA : 0F 00 00 F0 | s_U              hex   0F0000F0       
+  620 |  2     font.s    521 | Data        | 00 |         |    4 | 00/06BE : 0F 00 00 F0 |                  hex   0F0000F0       
+  621 |  2     font.s    522 | Data        | 00 |         |    4 | 00/06C2 : 0F 00 00 F0 |                  hex   0F0000F0       
+  622 |  2     font.s    523 | Data        | 00 |         |    4 | 00/06C6 : 0F 00 00 F0 |                  hex   0F0000F0       
+  623 |  2     font.s    524 | Data        | 00 |         |    4 | 00/06CA : 0F 00 00 F0 |                  hex   0F0000F0       
+  624 |  2     font.s    525 | Data        | 00 |         |    4 | 00/06CE : 00 FF FF 00 |                  hex   00FFFF00       
+  625 |  2     font.s    526 | Empty       | 00 |         |    0 | 00/06D2               |                                       
+  626 |  2     font.s    527 | Data        | 00 |         |    4 | 00/06D2 : 0F 00 00 F0 | s_V              hex   0F0000F0       
+  627 |  2     font.s    528 | Data        | 00 |         |    4 | 00/06D6 : 0F 00 00 F0 |                  hex   0F0000F0       
+  628 |  2     font.s    529 | Data        | 00 |         |    4 | 00/06DA : 0F 00 00 F0 |                  hex   0F0000F0       
+  629 |  2     font.s    530 | Data        | 00 |         |    4 | 00/06DE : 0F 00 00 F0 |                  hex   0F0000F0       
+  630 |  2     font.s    531 | Data        | 00 |         |    4 | 00/06E2 : 00 F0 0F 00 |                  hex   00F00F00       
+  631 |  2     font.s    532 | Data        | 00 |         |    4 | 00/06E6 : 00 0F F0 00 |                  hex   000FF000       
+  632 |  2     font.s    533 | Empty       | 00 |         |    0 | 00/06EA               |                                       
+  633 |  2     font.s    534 | Data        | 00 |         |    4 | 00/06EA : 0F 00 00 F0 | s_W              hex   0F0000F0       
+  634 |  2     font.s    535 | Data        | 00 |         |    4 | 00/06EE : 0F 00 00 F0 |                  hex   0F0000F0       
+  635 |  2     font.s    536 | Data        | 00 |         |    4 | 00/06F2 : 0F 00 00 F0 |                  hex   0F0000F0       
+  636 |  2     font.s    537 | Data        | 00 |         |    4 | 00/06F6 : 0F 0F F0 F0 |                  hex   0F0FF0F0       
+  637 |  2     font.s    538 | Data        | 00 |         |    4 | 00/06FA : 0F F0 0F F0 |                  hex   0FF00FF0       
+  638 |  2     font.s    539 | Data        | 00 |         |    4 | 00/06FE : 0F 00 00 F0 |                  hex   0F0000F0       
+  639 |  2     font.s    540 | Empty       | 00 |         |    0 | 00/0702               |                                       
+  640 |  2     font.s    541 | Data        | 00 |         |    4 | 00/0702 : 0F 00 00 F0 | s_X              hex   0F0000F0       
+  641 |  2     font.s    542 | Data        | 00 |         |    4 | 00/0706 : 00 F0 0F 00 |                  hex   00F00F00       
+  642 |  2     font.s    543 | Data        | 00 |         |    4 | 00/070A : 00 0F F0 00 |                  hex   000FF000       
+  643 |  2     font.s    544 | Data        | 00 |         |    4 | 00/070E : 00 0F F0 00 |                  hex   000FF000       
+  644 |  2     font.s    545 | Data        | 00 |         |    4 | 00/0712 : 00 F0 0F 00 |                  hex   00F00F00       
+  645 |  2     font.s    546 | Data        | 00 |         |    4 | 00/0716 : 0F 00 00 F0 |                  hex   0F0000F0       
+  646 |  2     font.s    547 | Empty       | 00 |         |    0 | 00/071A               |                                       
+  647 |  2     font.s    548 | Data        | 00 |         |    4 | 00/071A : F0 00 00 F0 | s_Y              hex   F00000F0       
+  648 |  2     font.s    549 | Data        | 00 |         |    4 | 00/071E : 0F 00 0F 00 |                  hex   0F000F00       
+  649 |  2     font.s    550 | Data        | 00 |         |    4 | 00/0722 : 00 F0 F0 00 |                  hex   00F0F000       
+  650 |  2     font.s    551 | Data        | 00 |         |    4 | 00/0726 : 00 0F 00 00 |                  hex   000F0000       
+  651 |  2     font.s    552 | Data        | 00 |         |    4 | 00/072A : 00 0F 00 00 |                  hex   000F0000       
+  652 |  2     font.s    553 | Data        | 00 |         |    4 | 00/072E : 00 0F 00 00 |                  hex   000F0000       
+  653 |  2     font.s    554 | Empty       | 00 |         |    0 | 00/0732               |                                       
+  654 |  2     font.s    555 | Data        | 00 |         |    4 | 00/0732 : 0F FF FF F0 | s_Z              hex   0FFFFFF0       
+  655 |  2     font.s    556 | Data        | 00 |         |    4 | 00/0736 : 00 00 0F 00 |                  hex   00000F00       
+  656 |  2     font.s    557 | Data        | 00 |         |    4 | 00/073A : 00 00 F0 00 |                  hex   0000F000       
+  657 |  2     font.s    558 | Data        | 00 |         |    4 | 00/073E : 00 0F 00 00 |                  hex   000F0000       
+  658 |  2     font.s    559 | Data        | 00 |         |    4 | 00/0742 : 00 F0 00 00 |                  hex   00F00000       
+  659 |  2     font.s    560 | Data        | 00 |         |    4 | 00/0746 : 0F FF FF F0 |                  hex   0FFFFFF0       
+  660 |  2     font.s    561 | Empty       | 00 |         |    0 | 00/074A               |                                       
+  661 |  2     font.s    562 | Data        | 00 |         |    4 | 00/074A : 00 0F FF 00 | s_LBracket       hex   000FFF00       
+  662 |  2     font.s    563 | Data        | 00 |         |    4 | 00/074E : 00 0F 00 00 |                  hex   000F0000       
+  663 |  2     font.s    564 | Data        | 00 |         |    4 | 00/0752 : 00 0F 00 00 |                  hex   000F0000       
+  664 |  2     font.s    565 | Data        | 00 |         |    4 | 00/0756 : 00 0F 00 00 |                  hex   000F0000       
+  665 |  2     font.s    566 | Data        | 00 |         |    4 | 00/075A : 00 0F 00 00 |                  hex   000F0000       
+  666 |  2     font.s    567 | Data        | 00 |         |    4 | 00/075E : 00 0F FF 00 |                  hex   000FFF00       
+  667 |  2     font.s    568 | Empty       | 00 |         |    0 | 00/0762               |                                       
+  668 |  2     font.s    569 | Data        | 00 |         |    4 | 00/0762 : 0F 00 00 00 | s_BackSlash      hex   0F000000       
+  669 |  2     font.s    570 | Data        | 00 |         |    4 | 00/0766 : 00 F0 00 00 |                  hex   00F00000       
+  670 |  2     font.s    571 | Data        | 00 |         |    4 | 00/076A : 00 0F 00 00 |                  hex   000F0000       
+  671 |  2     font.s    572 | Data        | 00 |         |    4 | 00/076E : 00 00 F0 00 |                  hex   0000F000       
+  672 |  2     font.s    573 | Data        | 00 |         |    4 | 00/0772 : 00 00 0F 00 |                  hex   00000F00       
+  673 |  2     font.s    574 | Data        | 00 |         |    4 | 00/0776 : 00 00 00 F0 |                  hex   000000F0       
+  674 |  2     font.s    575 | Empty       | 00 |         |    0 | 00/077A               |                                       
+  675 |  2     font.s    576 | Data        | 00 |         |    4 | 00/077A : 00 FF F0 00 | s_RBracket       hex   00FFF000       
+  676 |  2     font.s    577 | Data        | 00 |         |    4 | 00/077E : 00 00 F0 00 |                  hex   0000F000       
+  677 |  2     font.s    578 | Data        | 00 |         |    4 | 00/0782 : 00 00 F0 00 |                  hex   0000F000       
+  678 |  2     font.s    579 | Data        | 00 |         |    4 | 00/0786 : 00 00 F0 00 |                  hex   0000F000       
+  679 |  2     font.s    580 | Data        | 00 |         |    4 | 00/078A : 00 00 F0 00 |                  hex   0000F000       
+  680 |  2     font.s    581 | Data        | 00 |         |    4 | 00/078E : 00 FF F0 00 |                  hex   00FFF000       
+  681 |  2     font.s    582 | Empty       | 00 |         |    0 | 00/0792               |                                       
+  682 |  2     font.s    583 | Data        | 00 |         |    4 | 00/0792 : 00 00 F0 00 | s_Carot          hex   0000F000       
+  683 |  2     font.s    584 | Data        | 00 |         |    4 | 00/0796 : 00 0F 0F 00 |                  hex   000F0F00       
+  684 |  2     font.s    585 | Data        | 00 |         |    4 | 00/079A : 00 F0 00 F0 |                  hex   00F000F0       
+  685 |  2     font.s    586 | Data        | 00 |         |    4 | 00/079E : 00 00 00 00 |                  hex   00000000       
+  686 |  2     font.s    587 | Data        | 00 |         |    4 | 00/07A2 : 00 00 00 00 |                  hex   00000000       
+  687 |  2     font.s    588 | Data        | 00 |         |    4 | 00/07A6 : 00 00 00 00 |                  hex   00000000       
+  688 |  2     font.s    589 | Empty       | 00 |         |    0 | 00/07AA               |                                       
+  689 |  2     font.s    590 | Data        | 00 |         |    4 | 00/07AA : 00 00 00 00 | s_UnderLine      hex   00000000       
+  690 |  2     font.s    591 | Data        | 00 |         |    4 | 00/07AE : 00 00 00 00 |                  hex   00000000       
+  691 |  2     font.s    592 | Data        | 00 |         |    4 | 00/07B2 : 00 00 00 00 |                  hex   00000000       
+  692 |  2     font.s    593 | Data        | 00 |         |    4 | 00/07B6 : 00 00 00 00 |                  hex   00000000       
+  693 |  2     font.s    594 | Data        | 00 |         |    4 | 00/07BA : 00 00 00 00 |                  hex   00000000       
+  694 |  2     font.s    595 | Data        | 00 |         |    4 | 00/07BE : FF FF FF F0 |                  hex   FFFFFFF0       
+  695 |  2     font.s    596 | Empty       | 00 |         |    0 | 00/07C2               |                                       
+  696 |  2     font.s    597 | Data        | 00 |         |    4 | 00/07C2 : 00 00 00 00 | s_Template       hex   00000000       
+  697 |  2     font.s    598 | Data        | 00 |         |    4 | 00/07C6 : 00 00 00 00 |                  hex   00000000       
+  698 |  2     font.s    599 | Data        | 00 |         |    4 | 00/07CA : 00 00 00 00 |                  hex   00000000       
+  699 |  2     font.s    600 | Data        | 00 |         |    4 | 00/07CE : 00 00 00 00 |                  hex   00000000       
+  700 |  2     font.s    601 | Data        | 00 |         |    4 | 00/07D2 : 00 00 00 00 |                  hex   00000000       
+  701 |  2     font.s    602 | Data        | 00 |         |    4 | 00/07D6 : 00 00 00 00 |                  hex   00000000       
+  702 |  2     font.s    603 | Empty       | 00 |         |    0 | 00/07DA               |                                       
+  703 |  2     font.s    604 | Empty       | 00 |         |    0 | 00/07DA               |                                       
+  704 |  1 shrhello.s    100 | Empty       | 00 |         |    0 | 00/07DA               |                                       
+------+----------------------+-------------+----+---------+------+-----------------------+----------------------------------------------------------------------

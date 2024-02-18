@@ -1,0 +1,1241 @@
+****************************************
+; http://www.brutaldeluxe.fr/products/crossdevtools/merlin/index.html
+****************************************
+		lst on
+;		rel						; Merlin 32 - relocatable cmd, GS/OS only, needs REL file
+;		org $030800 			;
+		org $0800 			;
+		dsk SHRHELLO.l			; Save Name
+		TYP $B3 		         ; S16, GS/OS Application
+;		TYP  $06 			   ; BIN file / fixed addr
+
+****************************************
+* Preliminary "Main"
+****************************************
+		mx %00               ; tell assm. being 16-bit mode
+		rep #$30	            ; 16-bit mode
+		phk						; Set Data Bank to Program Bank
+		plb						; Always do this first!
+
+INVERSE = $32
+
+; Constants
+
+CHAR_NORMAL = $ff
+CHAR_INVERSE = $3f
+CHAR_FLASH = $7f
+
+; ROM entry points
+
+COUT = $fded
+
+; Main
+_dostuff
+	lda #CHAR_FLASH
+	sta INVERSE
+
+loop
+	lda	#$D8
+	jsr	COUT
+	jmp loop		; OMG so many Xs
+
+
+
+		tdc  						; get current direct page
+		sta UserDP 				; and save it for the moment
+;		jsr TooLInit  			; start up aLL tooLs we'LL need
+
+****************************************
+* V_init - init video system
+****************************************
+		jsr setpalette 		; setup 1st pallet
+
+
+		lda #$0000 				; 320px, no intr, no color fill, res, pallet 0
+		jsr SetSCBs				; set all SCBs to 00 (320 mode, pal 0, no fill, no interrupt)
+		jsr GraphicsOn
+
+		lda #$1212				; clear screen to color 10
+		jsr ClearToColor
+
+
+****************************************
+* bootstrap
+****************************************
+* find dungeon file
+* v_init
+			jsr ITable				; init sprites screen line table
+
+* m_defaults
+* m_init - menu
+* r_init - render
+* p_init - game play
+* s_init - sound
+* h_init - hud
+			jsr d_mainloop
+Quit
+			jsl $E100A8				; Prodos 16 entry point
+			da $29					; Quit code
+			adrl QuitParm			; address of parameter table
+			bcs Error				; never taken
+
+Error		brk						; should never get here
+
+QuitParm	
+			adrl $0000				; pointer to pathname (not used here)
+			da $00					; quit type (absolute quite)
+
+****************************************
+* Logo sceen
+****************************************
+
+****************************************
+* Title screen
+****************************************
+
+****************************************
+* Master Game loop
+****************************************
+d_mainloop
+*
+* i_startframe
+* r_tics - 
+* s_update
+* d_display
+			jsr d_display
+			rts
+
+****************************************
+* d_display
+****************************************
+d_display
+         lda      #ATSW
+         sta      SWidth
+         lda      #ATSH
+         sta      SHeight
+
+         lda      ATSPnt
+         sta      SImage
+         lda      ATSPnt+2
+         sta      SImage+2
+
+         lda      #$ffff
+         sta      SCollin
+         stz      SMask
+
+         lda      #120
+         pha
+         lda      #75
+         pha
+
+         jsr      DRSprite
+			jsr WaitKey
+			rts
+****************************************
+
+****************************************
+
+****************************************
+
+****************************************
+			ldx #0
+cline2
+			ldy #0
+cline1
+			txa
+			jsr putpix
+			iny
+			cpy #200
+			bne cline1
+;		jsr WaitKey
+			inx
+			cpx #320
+			bne cline2
+			jsr WaitKey
+
+**************************************************
+UserDP
+			ds 2 						;
+HelloStr	str 'HELLO KANSASFEST'
+
+ToolTable
+			da 13 				; no. of tooLs to Load
+			da $04,$0100 		; quickdraw
+			da $05,$0100 		; desk manager
+			da $06,$0100 		; event manager
+			da $0E,$0000 		; window manager
+			da $0F,$0100 		; menu manager
+			da $10,$0100 		; controL manager
+			da $12,$0000 		; qd auxiLiary
+			da $13,$0000 		; print manager
+			da $14,$0000 		; Line edit
+			da $15,$0000 		; diaLog manager
+			da $17,$0100 		; std fiLe manager
+			da $18,$0100 		; font manager
+			da $1C,$0000 		; List manager
+
+sprite1
+			da $0000,$0000
+			da $0111,$1110
+			da $0100,$0010
+			da $0100,$0010
+			da $0100,$0010
+			da $0100,$0010
+			da $0111,$1110
+			da $0000,$0000
+
+**************************************************
+* Build 1st pallet - generic colors
+**************************************************
+setpalette
+			lda #$0FFF				; WHITE color
+			ldx #$0001				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0ddd				; other color
+			ldx #$0002				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0bbb				; other color
+			ldx #$0003				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0999				; other color
+			ldx #$0004				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0777				; other color
+			ldx #$0005				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0555				; other color
+			ldx #$0006				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0333				; other color
+			ldx #$0007				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0111				; other color
+			ldx #$0007				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0000				; other color
+			ldx #$0008				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0800				; other color
+			ldx #$0009				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0080				; other color
+			ldx #$000a				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0008				; other color
+			ldx #$000b				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0f00				; other color
+			ldx #$000c				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$00f0				; other color
+			ldx #$000d				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$000f				; other color
+			ldx #$000e				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			lda #$0000				; other color
+			ldx #$000f				; palette index 1 (NOT zero)
+			jsr SetPaletteColor
+			rts
+**************************************************
+* putpix8, x= ->0-319 (nibbles) 160 bytes y=0-199 *
+* assume 16-bit mode                             *
+* assume a is 1 pixel                            *
+**************************************************
+ppmask8  da $FF0F,$FFF0 ; 
+putpix 	
+			phy				; y pos - save x & y 
+			phx				; x pos
+								; ---
+			cpx #320  		;
+			bmi ppc1       ;
+			brk
+			bra ppexit     ;
+ppc1
+			cpy #200  		;
+			bmi ppc2       ;
+			brk  
+			bra ppexit     ;
+ppc2
+			pha      		; save pixel - will be destroyed
+			phx 				;
+								; ---
+			txa      		; 4 bits/pixel - index the x coord
+			and #1   		; strip off a bit for a 16-bit / 4 pixel mask
+			asl a          ;
+			sta ppidx 		; x, index into mask and col (pixel / 4)
+			pla 				;
+			ror a          ;
+			sta pptx       ;
+			bne pp8low     ; --- move pixel to right nibble
+								; --- high nibble 
+			pla 				;
+			asl a          ;
+			asl a          ;
+			asl a          ;
+			asl a          ;
+			bra pp8cnt 		;
+pp8low
+			pla
+pp8cnt
+			sta pppx
+								; --- calc index into graphics area
+			tya				; need to y * 161 + x/4 ->E12000,x
+			asl	a  		; 2
+			asl	a  		; 4
+			asl	a  		; 8
+			asl	a  		; 16
+			asl	a  		; 32
+			sta   pptemp	;
+			asl   a  		; 64
+			asl   a  		; 128
+			clc      		;
+			adc pptemp 		; y * 128 + y * 32 = y * 160(bytes) (1 line shr)
+			adc pptx 		; +x/4
+			tax      		; idx into graphic area
+
+			ldal $E12000, x
+         ldy ppidx 		;
+         and ppmask8,y 	; mask out pixel
+			ora pppx 		; put in the wanted pixel
+			stal $E12000,x ; and into graphics area
+ppexit
+			plx  				;
+			ply  				;
+			rts
+
+**************************************************
+* putpix16, x= ->0-319 (nibbles) 160 bytes y=0-199 *
+* assume 16-bit mode                             *
+* assume a is 1 pixel                            *
+**************************************************survey 
+ppmask   da $0FFF,$F0FF,$FF0F,$FFF0
+ppshift  da $0000,$0004,$0008,$000c ;
+
+putpix16   
+			phy				; y pos - save x & y 
+			phx				; x pos
+			pha      		; save pixel - will be destroyed
+			phx				; x pos
+			sty ppty 		; need for the mult as it's 161 to next line
+								; --- handle the 4bit pixel and word access
+			txa      		; 4 bits/pixel - index the x coord
+			and #3   		; strip off 2 bits for a 16-bit / 4 pixel mask
+			sta ppidx 		; x, index into mask and col (pixel / 4)
+			asl a    		; * 2 (word index)
+			tax				;
+			lda ppshift,x 	; how much to shift pixel bits
+			tax				;
+								; --- calc x index into graphics area
+			pla      		; orig x
+			clc  				;
+			ror a    		; / 2
+			clc  				;
+			ror a    		; / 4 = word index
+			sta pptx 		; to be added to row calc to index into graphics
+								; --- 
+			lda ppidx 		; pixel, shift into right spot
+			pla      		; get pixel
+pppixl
+			asl   a  		; shift pixel to match the 4bit pos in a word
+			dex      		; 
+			bne   pppixl 	;
+			sta   pppx  	;
+								; --- calc index into graphics area
+			tya				; need to y * 161 + x/4 ->E12000,x
+			asl	a  		; 2
+			asl	a  		; 4
+			asl	a  		; 8
+			asl	a  		; 16
+			asl	a  		; 32
+			sta   pptemp	;
+			asl   a  		; 64
+			asl   a  		; 128
+			clc      		;
+			adc pptemp 		; y * 128 + y * 32 = y * 160(bytes) (1 line shr)
+			adc ppty 		; this is the +1 to 160 for (161*y)
+			adc pptx 		; +x/4
+			tax      		; idx into graphic area
+			ldal $E12000, x
+         ldy ppidx 		;
+         and ppmask,y 	; mask out pixel
+			ora pppx 		; put in the wanted pixel
+			stal $E12000,x ; and into graphics area
+			plx  				;
+			ply  				;
+			rts
+
+pptemp	ds    2  		; 2 bytes temp space
+pptx     ds    2  		; temp x
+ppty		ds    2  		; temp y
+pppx     ds    2  		; temp pixel
+ppidx    ds    2  		; temp index into mask
+****************************************
+* wait 					                *
+****************************************
+WaitLoop	pha
+			txa
+			pha
+			ldx	#255
+wloop 	dex
+			bpl	wloop
+			pla 
+			tax
+			pla 
+			rts 
+
+****************************************
+			brk
+			brk
+****************************************
+* Turn on SHR mode                     *
+****************************************
+GraphicsOn	
+			sep #$30	;8-bit mode
+			lda #$81	;%1000 0001
+			stal $00C029	;Turn on SHR mode
+			rep #$30	;back to 16-bit mode
+			rts
+
+****************************************
+* A= color values (0RGB)               *
+* X= color/palette offset              *
+*   (0-F = pal0, 10-1F = pal1, etc.)   *
+****************************************
+SetPaletteColor 
+			pha	;save accumulator
+			txa
+			asl	;X*2 = real offset to color table
+			tax
+			pla
+			stal $E19E00,x	;palettes are stored from $E19E00-FF
+			rts	;yup, that's it
+
+****************************************
+* A= color values (0RGB)               *
+****************************************
+ClearToColor
+			ldx #$7D00	;start at top of pixel data! ($2000-9D00)
+:clearloop
+			dex
+			dex
+			stal $E12000,x	;screen location
+			bne :clearloop	;loop until we've worked our way down to 0
+			rts
+
+****************************************
+SetSCBs	ldx #$0100	;set all $100 scbs to A
+:scbloop	dex
+			dex
+			stal $E19D00,x
+			bne :scbloop
+			rts
+
+****************************************
+WaitKey	sep #$30
+:wait		ldal $00c000
+			bpl :wait
+			stal $00c010
+			rep #$30
+			rts
+
+****************************************
+* Advanced Prog. Tech. for Apple IIGS Toolbox
+****************************************
+Toolbox	equ	$E10000		;
+TRUE		equ	$8000			;
+FALSE		equ	$0000  		;
+pagesz	equ  	$100  		; 256 bytes / page
+
+UserID	ds 	2 				;
+
+TooLInit 
+*** START UP TOOL LOCATOR ***
+;			_TLStartup ; TooL Locator
+			ldx 	#$0203		; MTStartup
+			jsl	$E10000		;
+
+*** INITIALIZE MEMORY MANAGER ***
+			pha 					; space for result
+			ldx 	#$0202 		; MMStartup
+			jsl 	$E10000		;
+			pla 					; user id
+			sta 	UserID
+
+*** INITIALIZE MISC. TOOLS SET ***
+;			_MTStartup
+
+*** GET SOME DIRECT PAGE MEMORY FOR TOOLS THAT NEED IT ***
+;			PushLong #0  		; space for handLe
+;			PushLong #$800    ; eight pages
+;			PushWord MyID 		;
+;			PushWord #$C001  	; Locked, fixed, fixed bank
+;			PushLong #0 		;
+;			_NewHandle
+			
+;			pla
+;			sta DPHandle
+;			pla
+;			lda [DPHandLe]
+;			sta DPPointer
+;			sta DPHandle+2
+
+*** INITIALIZE QUICKDRAW II ***
+;			lda DPPointer ; pointer to direct page
+;			pha
+			
+;			PushWord #ScreenMode  ; either 320 or 640 mode
+;			PushWord #160  		 ; max size of scan Line
+;			PushWord MyID
+;			_QDStartup
+
+*** INITIALIZE EVENT MANAGER ***
+;			lda DPPointer ; pointer to direct page
+;			clc
+;			adc #$300 ; QD direct page + #$300
+;			pha ; (QD needs 3 pages)
+;			PushWord #20 ; queue size
+;			PushWord #0 ; X cLamp Low
+;			PushWord #MaxX ; X cLamp high
+;			PushWord #0 ; y cLamp Low
+;			PushWord #200 ; y cLamp high
+;			PushWord MyID
+;			_EMStartup
+			rts
+
+****************************************
+ShutDown
+;			_EMShutDown
+;			_QDShutDown
+;			_MTShutDown
+;			PushLong DPHandle
+;			_DisposeHandLe
+;			PushWord MyID
+;			_MMShutDown
+;			_TLShutDown
+			rts
+
+
+****************************************
+* sample floor (byte) 00-open, 1x-wall
+****************************************
+FLOOR   hex  11111111111111111111 ; 0base  0-10 cols
+		  hex  11000000000000000011 ; 0-10 rows
+		  hex  11001111111111110011
+		  hex  11001100000000110011
+		  hex  11001100111100110011
+		  hex  11001100111100110011
+		  hex  11000000111100110011
+		  hex  11001100111100110011
+		  hex  11001100111100110011
+		  hex  11001100111100110011
+		  hex  11001100000000110011
+		  hex  11001111111111110011
+		  hex  11000000000000000011
+		  hex  11111111111111111111
+
+****************************************
+maph		da 10
+mapw		da 10
+
+screenh	da 176
+screenw	da 120
+
+playerx	da 1 		; player's map coord
+playery	da 1
+
+****************************************
+; wall sprite 128 x 96
+WALL	hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000
+		hex 11111111111111111111111111111111000000000000000000000000000000001111111111111111111111111111111100000000000000000000000000000000			
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+		hex 00000000000000000000000000000000111111111111111111111111111111110000000000000000000000000000000011111111111111111111111111111111
+****************************************
+****************************************
+*	use FONT	;include our font library
+			put font.s
+
+;...............................................................
+;
+; Fast Screen Refresh With PEI Slamming
+;................................................................
+DrawBuffer
+			sep 	#$20
+			lda 	>$e0c035  	; Get the current shadow reg
+			ora  	#$08  			; Turn on stop SHR shadow
+			sta 	>$e0c035  	;
+			rep 	#$20  			;
+
+			; draw
+
+			sep 	#$20
+			lda 	>$e0c035  	  	; (shadowreg) Get the current shadow reg
+			and  	#$F7  			; Turn off stop SHR shadow
+			sta 	>$e0c035  	;
+			rep 	#$20  			;
+
+			; write to graphics screen by touching buffer to cause copy
+
+;$2000 - $9D00 (or $A000 for pallets etc)
+			php		; Push Processor Status Register
+			lda	>$E0C068-1
+			pha		; Save main/aux bank state
+			phd		; Save DPage
+			tsc		; Transfer Stack Pointer to C Accumulator
+			sta	>StackPtr	; Store Accumulator in StackPtr
+
+			sei		; Disable interrupts
+
+			lda	#$3000	; Read/write aux 48k (SHR) via bank 0
+			sta	>$E0C068-1
+
+			ldy	#$2000	; Point to start of SHR
+
+peiChunk	ldx	#7	; Chunks before interrupts
+
+peiPage	tya
+			tcd		; Move DP
+
+			clc
+			adc	#$FF	; Point to top of page
+			tcs		; Move stack
+
+			inc	a
+			tay		; Keep + 0x100 for later
+
+			pei	$FE	; "Slam" a single page
+			pei	$FC
+			pei	$FA
+			pei	$F8
+			pei	$F6
+			pei	$F4
+			pei	$F2
+			pei	$F0
+			pei	$EE
+			pei	$EC
+			pei	$EA
+			pei	$E8
+			pei	$E6
+			nop
+			pei	$E4
+			pei	$E2
+			pei	$E0
+			pei	$DE
+			pei	$DC
+			pei	$DA
+			pei	$D8
+			pei	$D6
+			pei	$D4
+			pei	$D2
+			pei	$D0
+			pei	$CE
+			pei	$CC
+			nop
+			pei	$CA
+			pei	$C8
+			pei	$C6
+			pei	$C4
+			pei	$C2
+			pei	$C0
+			pei	$BE
+			pei	$BC
+			pei	$BA
+			pei	$B8
+			pei	$B6
+			pei	$B4
+			pei	$B2
+			nop
+			pei	$B0
+			pei	$AE
+			pei	$AC
+			pei	$AA
+			pei	$A8
+			pei	$A6
+			pei	$A4
+			pei	$A2
+			pei	$A0
+			pei	$9E
+			pei	$9C
+			pei	$9A
+			pei	$98
+			nop
+			pei	$96
+			pei	$94
+			pei	$92
+			pei	$90
+			pei	$8E
+			pei	$8C
+			pei	$8A
+			pei	$88
+			pei	$86
+			pei	$84
+			pei	$82
+			pei	$80
+			nop
+			pei	$7E
+			pei	$7C
+			pei	$7A
+			pei	$78
+			pei	$76
+			pei	$74
+			pei	$72
+			pei	$70
+			pei	$6E
+			pei	$6C
+			pei	$6A
+			pei	$68
+			pei	$66
+			nop
+			pei	$64
+			pei	$62
+			pei	$60
+			pei	$5E
+			pei	$5C
+			pei	$5A
+			pei	$58
+			pei	$56
+			pei	$54
+			pei	$52
+			pei	$50
+			pei	$4E
+			nop
+			pei	$4C
+			pei	$4A
+			pei	$48
+			pei	$46
+			pei	$44
+			pei	$42
+			pei	$40
+			pei	$3E
+			pei	$3C
+			pei	$3A
+			pei	$38
+			pei	$36
+			pei	$34
+			nop
+			pei	$32
+			pei	$30
+			pei	$2E
+			pei	$2C
+			pei	$2A
+			pei	$28
+			pei	$26
+			pei	$24
+			pei	$22
+			pei	$20
+			pei	$1E
+			pei	$1C
+			pei	$1A
+			nop
+			pei	$18
+			pei	$16
+			pei	$14
+			pei	$12
+			pei	$10
+			pei	$0E
+			pei	$0C
+			pei	$0A
+			pei	$08
+			pei	$06
+			pei	$04
+			pei	$02
+			pei	$00
+
+			cpy	#$A000	; Did we copy everything?
+			bge	peiEnd	; Yep!
+
+			dex
+			bmi	peiInts	; Do we need to process interrupts?
+
+			brl	peiPage
+
+peiInts	lda	#0	; Swap main 48k into bank 0
+			sta	>$E0C068-1
+			lda	>StackPtr	; Load original Stack Pointer into Accumulator
+			tcs		; Transfer Accumulator to Stack Pointer (Restores original stack)
+
+			cli		; Go Interrupts!  Go!
+			sei		; Stop interrupts
+
+			lda	#$3000	; Read/write aux 48k (SHR) via bank 0
+			sta	>$E0C068-1
+
+			brl	peiChunk
+
+peiEnd	lda	#0	; Swap main 48k into bank 0
+			sta	>$E0C068-1
+			lda	>StackPtr
+			tcs		; Restore stack
+			pld		; Restore DP
+			pla
+			sta	>$E0C068-1	; Restore main/aux bank state
+			plp		; Restore processor register
+
+			sep   #$20	; Turn Shadowing Off
+			lda	>$E0C035
+			ora	#$08
+			sta	>$E0C035
+			rep   #$20
+
+			rts
+
+StackPtr	ds	2	; Space for SP
+
+
+;...............................................................
+;
+; Sprites library.
+;................................................................
+
+;................................................................
+;
+; ITable
+; ~~~~~~
+; Initialise the line start table, which contains the address in
+; memory that each super hires line starts.  (Note we are talking
+; about the pixel map here.  The SCB's we shall leave to
+; Quickdraw II unless it appears to be too slow also.
+;................................................................
+
+ITable   
+         ldx   #0
+         lda   #$2000
+ITloop   sta   Lstart,x
+         inx
+         inx
+         clc
+         adc   #$00a0
+         cpx   #199*2
+         bne   ITloop
+         rts
+
+;................................................................
+;
+; LOffset
+; ~~~~~~~
+; LOffset determines the address in memory that the sprite starts
+; at for a particular line of the sprite.
+;
+; The formula is as follows :
+;
+;        LineOffset = Lstart[Line number] + (Xcoordinate / 2)   (2 bytes)
+;
+;     where Lstart[Line number] is one entry in the Lstart table
+;     pointing to the first byte of the appropriate line on the
+;     super hires screen.
+;
+; LOffset is passed two parameters via the stack, in order :
+;
+;        Line Number : Y coordinate on the screen.              (2 bytes)
+;        Pixel       : X coordinate on the screen.              (2 bytes)
+;................................................................
+
+
+LOffset  
+         ply                            ;Preserve return address.
+         pla                            ;Get Line number from stack.
+         asl   a                        ;Produce index into Lstart.
+         tax                            ;Put into index register.
+         pla                            ;Get the x coordinate.
+         lsr   a                        ;Divide by two.
+         clc                            ;Prepare for addition
+         adc   Lstart,x                 ;Produce result value.
+         pha                            ;Put the result on the stack.
+         phy
+         rts
+
+;................................................................
+;
+; DLine.
+; ~~~~~~
+; DLine will put one line of the sprite on the screen.
+;
+; It comes in four versions as follows :
+;
+;   DLine      : Does a direct transfer, no funny business.
+;   DLineCol   : Does collision detection as well.
+;   DLineAND   : AND's the pattern onto the screen.
+;   DLineOR    : OR's the pattern onto the screen.
+;
+; The last two are used when we want to preseve the background in detail
+; around the shape.  Special patterns are needed for these to work.
+;................................................................
+
+DLine    
+         lda   Addr                     ;Get source address.
+         sta   3                        ;Store it in DP for speed in
+;                                        the actual transfer.
+
+         lda   SCOffset                 ;Put the screen address in the DP
+         sta   6                        ;also.  Note it is a long word
+         ldy   #$e1                     ;pointing to bank $e1.
+         sty   8
+
+
+         lda   SWidth                   ;Get sprites width in bytes.
+         lsr   a                        ;Multiply by two as we are transfering
+         tay                            ;a word at a time.
+
+DLLoop   lda   (3)                      ;Get a word.
+         sta   [6]                      ;Store it.
+
+         inc   6                        ;Increment pointers.
+         inc   6
+         inc   3
+         inc   3
+
+         dey                            ;Decrement word counter.
+         bne   DLLoop                   ;If unfinished, go back.
+
+         rts
+
+;................................................................
+;
+; DLineCol.
+; ~~~~~~~~~
+; Handles collision detection by OR'ing the contents of the screen
+; (before drawing) with SCOLISN, thus if anything was there, SCOLISN
+; will be non-zero after the transfer.
+;................................................................
+
+DLineCol 
+         lda   Addr                     ;Get source address.
+         sta   3                        ;Store it in DP for speed in
+;                                        the actual transfer.
+
+         lda   SCOffset                 ;Put the screen address in the DP
+         sta   6                        ;also.  Note it is a long word
+         ldy   #$e1                     ;pointing to bank $e1.
+         sty   8
+
+
+         lda   SWidth                   ;Get sprites width in bytes.
+         lsr   a                        ;Multiply by two as we are transfering
+         tay                            ;a word at a time.
+
+
+DLCLoop  lda   [6]                      ;Get current screen contents.
+         tsb   SColisn                  ;OR and STORE it at SColisn
+         lda   (3)                      ;Get shape value.
+         sta   [6]                      ;Store it.
+
+         inc   6                        ;Increment pointers.
+         inc   6
+         inc   3
+         inc   3
+
+         dey
+         bne   DLCLoop
+
+         rts
+
+;................................................................
+;
+; DLineAND.
+; ~~~~~~~~~
+; AND the pattern with the current contents of the screen before
+; storing it.
+;................................................................
+
+DLineAND 
+			lda   Addr                     ;Get source address.
+         sta   3                        ;Store it in DP for speed in
+;                                        the actual transfer.
+
+         lda   SCOffset                 ;Put the screen address in the DP
+         sta   6                        ;also.  Note it is a long word
+         ldy   #$e1                     ;pointing to bank $e1.
+         sty   8
+
+
+         lda   SWidth                   ;Get sprites width in bytes.
+         lsr   a                        ;Multiply by two as we are transfering
+         tay                            ;a word at a time.
+
+DLALoop  lda   (3)                      ;Get pattern data.
+         and   [6]                      ;AND it.
+         sta   [6]                      ;Store it.
+
+         inc   6                        ;Increment pointers.
+         inc   6
+         inc   3
+         inc   3
+
+         dey
+         bne   DLALoop
+
+         rts
+
+;................................................................
+;
+; DLineOR.
+; ~~~~~~~~
+; OR the pattern with the current contents of the screen before
+; storing it.
+;................................................................
+
+
+DLineOR  
+         lda   Addr                     ;Get source address.
+         sta   3                        ;Store it in DP for speed in
+;                                        the actual transfer.
+
+         lda   SCOffset                 ;Put the screen address in the DP
+         sta   6                        ;also.  Note it is a long word
+         ldy   #$e1                     ;pointing to bank $e1.
+         sty   8
+
+
+         lda   SWidth                   ;Get sprites width in bytes.
+         lsr   a                        ;Multiply by two as we are transfering
+         tay                            ;a word at a time.
+
+
+DLOLoop  lda   (3)                      ;Get pattern data.
+         eor   [6]                      ;Exclusive or it.
+         sta   [6]                      ;Store it.
+
+         inc   6                        ;Increment pointers.
+         inc   6
+         inc   3
+         inc   3
+
+         dey
+         bne   DLOLoop
+
+         rts
+
+
+;................................................................
+;
+; DRSprite.
+; ~~~~~~~~
+; DRSprite will draw a sprite on the SHR screen in 320*200 mode.
+; It takes two parameters from the caller, which are passed
+; via the stack, as follows :
+;
+;        Xcoordinate : X position on the SHR screen.            (2 bytes)
+;        Ycoordinate : Y position on the SHR screen.            (2 bytes)
+;
+; A Sprite Record uses the following format :
+;
+;        Height   : Word sized integer, number of pixels high.  (2 bytes)
+;        Width    : Word sized integer, width in bytes.         (2 bytes)
+;        Image    : Pointer to Sprite image.                    (4 bytes)
+;        Collin   : Line on which to do collision detection.    (2 bytes)
+;        Colisn   : Flag indicating if a collision occured.     (2 bytes)
+;        Mask     : Flag indicating if masking is to be used.   (2 bytes)
+;................................................................
+
+DRSprite 
+         plx                            ;Preserve return address.
+
+         stz   SColisn                  ;Zero collision flag.
+         lda   SImage                   ;Get image address.
+         sta   Addr                     ;Save it.
+
+         pla                            ;Get the Y coordinate.
+         sta   Line                     ;Set initial value of Line.
+         sta   Ycoord                   ;Save for end of loop check.
+
+         pla                            ;Get the X coordinate.
+         sta   Xcoord                   ;Save it.
+
+         phx                            ;Put return address back on stack.
+
+mloop    lda   Line                     ;Get current line being drawn on.
+         cmp   #199                     ;Make sure we aren't drawing below
+         bpl   findraw                  ;the physical screen.
+
+         lda   Xcoord                   ;Set up parms for LOffset call.
+         pha
+         lda   Line
+         pha
+         jsr   LOffset                  ;Calculate screen address.
+         pla                            ;Get result.
+         sta   SCOffset
+
+         lda   SMask                    ;Are we masking to the screen ?
+         beq   notmask                  ; No.  Do normal transfer.
+         cmp   #1                       ; Yes. AND mask this call ?
+         beq   doand                    ;      Yes.
+         jsr   DLineOR                  ;      No.  OR mask this call.
+         bra   mloopchk                 ;           Go on with loop.
+
+doand    jsr   DLineAND                 ;Call up AND routine.
+         bra   mloopchk                 ;Go on with loop.
+
+notmask  lda   SCollin                  ;Collision detection on this line ?
+         bne   donorm                   ; No.  Do normal transfer.
+         jsr   DLineCol                 ; Yes. Do collision detection.
+         bra   mloopchk                 ;      Go on with loop.
+
+donorm   jsr   DLine                    ;Normal transfer.
+
+mloopchk lda   Addr                     ;Increment Addr to point at the
+         clc                            ;next lines peice of data.
+         adc   SWidth
+         sta   Addr
+
+         dec   SCollin                  ;Decrement collision line counter.
+
+         inc   Line                     ;Move down the screen one line.
+         lda   Line                     ;Now check if we have drawn all of
+         sec                            ;the shape.
+         sbc   Ycoord
+         cmp   SHeight
+         bne   mloop                    ; No.  More to go.
+findraw  rts                            ; Yes. Return back to caller.
+
+GLData   
+
+Lstart   ds    199*2                    ;Table of screen line addresses.
+
+MAData   
+
+Addr     ds    2                        ;Temorary pointer to current data.
+Line     ds    2                        ;Current line being drawn on.
+Xcoord   ds    2                        ;Xcoordinate of sprite.
+Ycoord   ds    2                        ;Ycoordinate of sprite.
+SCOffset ds    2                        ;Memory location of screen.
+
+SHeight  ds       2
+SWidth   ds       2
+SImage   ds       4
+SCollin  ds       2
+SColisn  ds       2
+SMask    ds       2
+
+SHIndx   ds       2
+CNIndx   ds       2
+xpos     ds       2
+ypos     ds       2
+incval   ds       2
+
+ATSW    equ     10
+ATSH    equ     14
+
+ATSPnt  da      AT1,AT2
+*                3412  7856 ... (as words, hi-low are rev)
+AT1     hex  00000000000000000000
+		  hex  00000000000000000000
+		  hex  0000000000AA00000000
+		  hex  000000000A22A0000000
+		  hex  0000000AA2222AA00000
+		  hex  00000AA99222299AA000
+		  hex  00000A2222222222A000
+		  hex  000000AA229922AA0000
+		  hex  00000000A2222A000000
+		  hex  0000000EE0000EE00000
+		  hex  000000EE000000EE0000
+		  hex  00000A0A000000A0A000
+		  hex  00000000000000000000
+		  hex  00000000000000000000
+AT2
+		  hex  00000000000000000000
+		  hex  00000000000000000000
+		  hex  00000000000AA0000000
+		  hex  0000000000A22A000000
+		  hex  00000000AA2222AA0000
+		  hex  000000AA29922992AA00
+		  hex  000000A2222222222A00
+		  hex  0000000AA292292AA000
+		  hex  000000000A2222A00000
+		  hex  00000000EE0000EE0000
+		  hex  00000000EE0000EE0000
+		  hex  0000000A000A0A00A000
+		  hex  00000000000000000000
+		  hex  00000000000000000000
+
